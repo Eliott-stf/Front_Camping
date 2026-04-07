@@ -11,16 +11,15 @@ export const USER_INFOS = "userInfos"
 export const ROLES = {
     ADMIN: "ADMIN",
     USER: "USER",
-    OWNER: "Owner"
+    OWNER: "OWNER"
 };
 
 // ====================
 // CONFIG DE LA NAVBAR
 // ====================
 
-// //Navigation principale 
-// export const dataAlbumNav = [
-//     {title: "Accueil", path: "/", icon: AiOutlineHome},
-//     {title: "Hebergement", path: "/search", icon: AiOutlineSearch},
-//     {title: "Bibliothèque", path: "/library", icon: BiLibrary}
-// ]
+//Navigation principale 
+export const dataNavbar = [
+    { title: "Accueil", path: "/"},
+    { title: "Hebergement", path: "/biens" },
+]

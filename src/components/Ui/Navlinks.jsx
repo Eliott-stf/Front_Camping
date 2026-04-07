@@ -1,7 +1,7 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
 
-const Navlinks = ({ data, marginTop, handleClick, userId = 0 }) => {
+const Navlinks = ({ data, marginTop, className, handleClick, userId = 0 }) => {
     return (
         <div className={marginTop}>
             {data && data.map((item) => {
@@ -12,7 +12,7 @@ const Navlinks = ({ data, marginTop, handleClick, userId = 0 }) => {
                         key={item.title}
                         to={item.path.replace(':id', userId)}
                         end
-                        className="link-sidebar"
+                        className={className}
                         onClick={() => handleClick && handleClick()}
                     >
                         {Icon && <Icon className="mr-2" />}
