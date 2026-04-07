@@ -1,10 +1,10 @@
 import React from 'react'
-import { ScaleLoader } from 'react-spinners'
+import { BounceLoader } from 'react-spinners'
 
 const PageLoader = () => {
     return (
         <div className='bg-black col h-screen'>
-            <ScaleLoader size={100} color='rgba(30, 215, 96, 1)' />
+           <BounceLoader size={100} color="rgba(93, 67, 96, 1)"/>
         </div>
     )
 }

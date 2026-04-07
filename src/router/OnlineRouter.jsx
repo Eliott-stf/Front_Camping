@@ -3,6 +3,7 @@ import Booking from '../screens/OnlineScreens/Booking';
 import { createBrowserRouter } from 'react-router-dom';
 import App from "../App";
 import ErrorPage from '../screens/ErrorScreens/ErrorPage';
+import Home from '../screens/OfflineScreens/Home';
 
 const OnlineRouter = createBrowserRouter([
 
@@ -13,6 +14,10 @@ const OnlineRouter = createBrowserRouter([
             {
                 path: "/booking",   //Chemin de la vue 
                 element: <Booking/>,  //Element retourné
+            },
+            {
+                path: "/",
+                element: <Home/>
             }
         ]
     }
