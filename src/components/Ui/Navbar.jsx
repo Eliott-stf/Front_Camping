@@ -1,0 +1,86 @@
+import React, { useState } from "react";
+import { Link, useLocation } from "react-router-dom";
+import { CiMenuFries } from "react-icons/ci";
+import { AiOutlineClose } from "react-icons/ai";
+
+const navLinks = [
+  { label: "Accueil", path: "/" },
+  { label: "Le Parc", path: "/booking" },
+  { label: "Hébergements", path: "#hebergements" },
+  { label: "Activités", path: "#activites" },
+  { label: "Contact", path: "#contact" },
+];
+
+export default function Navbar() {
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const location = useLocation();
+
+  return (
+    <nav className="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-lg border-b border-plum-200/50">
+      <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+        <Link to="/" className="flex items-center gap-2 no-underline">
+          <span className="font-display text-xl font-bold text-plum-950 tracking-tight">
+            Le Lilas
+          </span>
+        </Link>
+
+        <div className="hidden md:flex items-center gap-1 bg-plum-100/60 rounded-full p-1.5">
+          {navLinks.map((link) => {
+            const isActive = location.pathname === link.path || location.hash === link.path;
+            
+            return (
+              <Link
+                key={link.label}
+                to={link.path}
+                className={`px-5 py-2 rounded-full text-sm font-medium transition-all duration-300 no-underline ${
+                  isActive
+                    ? "bg-plum-700 text-white shadow-md"
+                    : "text-plum-700 hover:bg-plum-200/80 hover:text-plum-900"
+                }`}
+              >
+                {link.label}
+              </Link>
+            );
+          })}
+        </div>
+
+        <Link to="#contact" className="hidden md:block btn-primaire no-underline text-sm">
+          Réserver
+        </Link>
+
+        <button
+          onClick={() => setMobileOpen(!mobileOpen)}
+          className="md:hidden p-2 text-plum-700"
+        >
+          {mobileOpen ? <AiOutlineClose className="w-6 h-6" /> : <CiMenuFries className="w-6 h-6" />}
+        </button>
+      </div>
+
+      {mobileOpen && (
+        <div className="md:hidden bg-white border-t border-plum-200 px-6 pb-6 pt-2 space-y-1">
+          {navLinks.map((link) => {
+            const isActive = location.pathname === link.path || location.hash === link.path;
+
+            return (
+              <Link
+                key={link.label}
+                to={link.path}
+                onClick={() => setMobileOpen(false)}
+                className={`block px-4 py-3 rounded-xl text-sm font-medium transition-all no-underline ${
+                  isActive
+                    ? "bg-plum-700 text-white"
+                    : "text-plum-700 hover:bg-plum-100"
+                }`}
+              >
+                {link.label}
+              </Link>
+            );
+          })}
+          <Link to="#contact" onClick={() => setMobileOpen(false)} className="block btn-primaire text-center no-underline mt-3 text-sm">
+            Réserver
+          </Link>
+        </div>
+      )}
+    </nav>
+  );
+}

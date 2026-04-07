@@ -4,6 +4,8 @@ import Home from "../screens/OfflineScreens/Home";
 import Login from "../screens/OfflineScreens/Login";
 import Register from "../screens/OfflineScreens/Register";
 import HomeOffline from "../screens/OfflineScreens/HomeOffline";
+import BienListe from "../screens/OfflineScreens/BienListe";
+import BienDetail from "../screens/OfflineScreens/BienDetail";
 
 const OfflineRouter = createBrowserRouter([
 
@@ -12,17 +14,25 @@ const OfflineRouter = createBrowserRouter([
         errorElement: <ErrorPage/>,
         children: [
             {
-                path: "/login",   //Chemin de la vue 
-                element: <Login/>,  //Element retourné
+                path: "/",
+                element: <Home/>
             },
             {
                 path: "/register",
                 element: <Register/>,
             },
             {
-                path: "/",
-                element: <Home/>
-            }
+                path: "/login",   //Chemin de la vue 
+                element: <Login/>,  //Element retourné
+            },
+            {
+                path: "/biens",   //Chemin de la vue 
+                element: <BienListe/>,  //Element retourné
+            },
+            {
+                path: "/biens/:id",   //Chemin de la vue 
+                element: <BienDetail/>,  //Element retourné
+            },
         ]
     }
 ]);
