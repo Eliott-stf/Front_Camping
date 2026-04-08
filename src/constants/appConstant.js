@@ -24,6 +24,10 @@ export const dataNavbar = [
     { title: "Hebergement", path: "/biens" },
 ]
 
+// ============================
+// CONFIG DE MA SECTION HOME PAGE
+// ============================
+
 export const dataSections = [
   {
     id: "decouverte",
@@ -50,3 +54,29 @@ export const dataSections = [
     reversed: false
   }
 ];
+
+// ================================================
+// CONFIG DE LA SEARCH BAR (Type de logement)
+// ================================================
+
+export const TYPES = [
+    { label: "Tous", value: "" },
+    { label: "Mobilhome", value: "M-H" },
+    { label: "Caravane", value: "Caravane" },
+    { label: "Emplacement", value: "Emplacement" },
+];
+
+// ============================
+// CONFIG DES TAXES SEJOUR ET PISCINE
+// ============================
+
+export const TAX_RATES = {
+    sejour: {
+        adulte: 0.60,
+        enfant: 0.35,
+    },
+    piscine: {
+        adulte: 1.50,
+        enfant: 1.00,
+    },
+};

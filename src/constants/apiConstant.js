@@ -15,3 +15,4 @@ export const API_URL = `${API_ROOT}/api`
 */
 //Images générales (logo, etc)
 export const IMAGE_URL = `${API_ROOT}/images`;
+
