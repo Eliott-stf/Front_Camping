@@ -15,19 +15,18 @@ export default function Navbar() {
             <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
                 <Link to="/" className="flex items-center gap-2 no-underline">
                     <span className="font-display text-xl font-bold text-plum-950 tracking-tight">
-                        Le Lilas
+                        Les Lilas
                     </span>
                 </Link>
 
-                {/* Injection de la navigation bureau via le paramètre marginTop utilisé comme conteneur */}
                 <Navlinks
                     data={dataNavbar}
                     userId={userId}
                     marginTop="hidden md:flex items-center gap-1 bg-plum-100/60 rounded-full p-1.5"
-                    className="navlink-desktop px-5 py-2 rounded-full text-sm font-medium transition-all duration-300 no-underline text-plum-700 hover:bg-plum-700 hover:text-white"
+                    className="px-5 py-2 rounded-full text-sm font-medium transition-all duration-300 no-underline text-plum-700 hover:bg-plum-700 hover:text-white [&.active]:bg-plum-700 [&.active]:text-white [&.active]:shadow-md"
                 />
 
-                <Link to="#contact" className="hidden md:block btn-primaire no-underline text-sm">
+                <Link to="#contact" className="hidden md:block bg-plum-600 text-white px-4 py-2 rounded-md shadow-sm hover:bg-plum-700 focus:ring-2 focus:ring-plum-500 focus:outline-none transition-all no-underline text-sm">
                     Réserver
                 </Link>
 
@@ -39,7 +38,6 @@ export default function Navbar() {
                 </button>
             </div>
 
-            {/* Injection de la navigation mobile */}
             {mobileOpen && (
                 <div className="md:hidden bg-white border-t border-plum-200 px-6 pb-6 pt-2 space-y-1">
                     <Navlinks
@@ -47,10 +45,10 @@ export default function Navbar() {
                         userId={userId}
                         handleClick={() => setMobileOpen(false)}
                         marginTop="flex flex-col space-y-1"
-                        className="navlink-mobile block px-4 py-3 rounded-xl text-sm font-medium transition-all no-underline text-plum-700 hover:bg-plum-700 hover:text-white"
+                        className="block px-4 py-3 rounded-xl text-sm font-medium transition-all no-underline text-plum-700 hover:bg-plum-700 hover:text-white [&.active]:bg-plum-700 [&.active]:text-white"
                     />
 
-                    <Link to="#contact" onClick={() => setMobileOpen(false)} className="block btn-primaire text-center no-underline mt-3 text-sm">
+                    <Link to="#contact" onClick={() => setMobileOpen(false)} className="block bg-plum-600 text-white px-4 py-2 rounded-md shadow-sm hover:bg-plum-700 focus:ring-2 focus:ring-plum-500 focus:outline-none transition-all text-center no-underline mt-3 text-sm">
                         Réserver
                     </Link>
                 </div>

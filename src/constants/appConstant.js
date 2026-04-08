@@ -14,12 +14,13 @@ export const ROLES = {
     OWNER: "OWNER"
 };
 
-// ====================
-// CONFIG DE LA NAVBAR
-// ====================
+// ============================
+// CONFIG DE LA NAVBAR/FOOTER
+// ============================
 
 //Navigation principale 
 export const dataNavbar = [
     { title: "Accueil", path: "/"},
     { title: "Hebergement", path: "/biens" },
 ]
+

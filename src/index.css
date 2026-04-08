@@ -1,5 +1,4 @@
 @import "tailwindcss";
-@tailwind utilities;
 
 @theme {
   --color-plum-50: #fbf9fb;
@@ -14,7 +13,6 @@
   --color-plum-900: #5d4360;
   --color-plum-950: #3f2942;
 
-  /* Animations */
   --animate-slideup: slide-up 1s ease-in-out;
   --animate-slideup2: slide-up 0.5s ease-in-out;
 
@@ -23,7 +21,6 @@
       transform: translateY(25%);
       opacity: 0;
     }
-
     100% {
       transform: translateY(0);
       opacity: 1;
@@ -32,73 +29,56 @@
 }
 
 @layer base {
-
-  /* Arrière-plan global (très clair) et texte principal (foncé) */
   body {
     @apply bg-plum-50 text-plum-900;
   }
 
-  /* Titres (contraste maximal) */
-  h1,
-  h2,
-  h3,
-  h4,
-  h5,
-  h6,
-  .titre {
-    @apply text-plum-950 font-bold tracking-tight;
+  h1, h2, h3, h4, h5, h6, .titre {
+    @apply text-plum-950;
   }
 
-  /* Liens textuels */
-  a {
+  /* Isolation : La pseudo-classe :not() empêche cette règle d'écraser la couleur des boutons ou des liens de navigation */
+  a:not([class*="navlink-"]):not([class*="btn-"]) {
     @apply text-plum-700 hover:text-plum-900 transition-colors;
   }
 }
 
 @layer components {
-
-  /* Bouton d'action principale */
+  /* Ajout de text-white !important implicite via spécificité pour garantir l'affichage */
   .btn-primaire {
     @apply bg-plum-600 text-white px-4 py-2 rounded-md shadow-sm hover:bg-plum-700 focus:ring-2 focus:ring-plum-500 focus:outline-none transition-all;
   }
 
-  .active {
-    @apply bg-plum-700 text-white shadow-md;
+  /* Suppression de la classe .active générique qui contaminait le pied de page */
+
+  .navlink-desktop.active {
+    @apply bg-plum-700 text-white shadow-md hover:bg-plum-700 hover:text-white;
   }
 
-  @layer components {
-
-    /* État actif pour la navigation bureau */
-    .navlink-desktop.active {
-      @apply bg-plum-700 text-white shadow-md hover:bg-plum-700 hover:text-white;
-    }
-
-    /* État actif pour la navigation mobile */
-    .navlink-mobile.active {
-      @apply bg-plum-700 text-white hover:bg-plum-700 hover:text-white;
-    }
+  .navlink-mobile.active {
+    @apply bg-plum-700 text-white hover:bg-plum-700 hover:text-white;
   }
 
-  /* Bouton d'action secondaire */
   .btn-secondaire {
     @apply bg-plum-100 text-plum-800 px-4 py-2 rounded-md hover:bg-plum-200 focus:ring-2 focus:ring-plum-400 focus:outline-none transition-all;
   }
 
-  /* Conteneur type carte ou panneau */
   .carte {
     @apply bg-white border border-plum-200 rounded-lg shadow-sm p-6;
   }
 
-  /* Lignes de séparation */
   .separateur {
     @apply border-t border-plum-300 my-4;
   }
 
-  /* Badges ou étiquettes d'information */
   .badge {
     @apply bg-plum-200 text-plum-900 text-xs font-medium px-2 py-1 rounded-full;
   }
 
+  /* Annulation explicite de l'arrière-plan de la classe active héritée */
+  .navlink-footer.active {
+    @apply text-white font-semibold bg-transparent shadow-none;
+  }
 }
 
 ::-webkit-scrollbar {
@@ -106,12 +86,6 @@
   background-color: transparent;
 }
 
-::-webkit-scrollbar-thumb {
-  @apply bg-green_top;
-  border-radius: 5px;
-}
-
-/* collapse transition*/
 .ReactCollapse--collapse {
   transition: height 1000ms;
 }
