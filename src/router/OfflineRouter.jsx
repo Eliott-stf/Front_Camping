@@ -6,11 +6,12 @@ import Register from "../screens/OfflineScreens/Register";
 import HomeOffline from "../screens/OfflineScreens/HomeOffline";
 import BienListe from "../screens/OfflineScreens/BienListe";
 import BienDetail from "../screens/OfflineScreens/BienDetail";
+import App from "../App";
 
 const OfflineRouter = createBrowserRouter([
 
     {
-        element: <HomeOffline/>,
+        element: <App/>,
         errorElement: <ErrorPage/>,
         children: [
             {

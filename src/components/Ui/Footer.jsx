@@ -15,7 +15,7 @@ export default function Footer() {
               <span className="font-display text-xl font-bold text-white">Les Lilas</span>
             </div>
             <p className="text-plum-400 text-sm leading-relaxed">
-              Un camping familial au cœur de la Provence, où la nature 
+              Un camping familial au cœur des Pyrénées, où la nature 
               et le confort se rencontrent pour des vacances parfaites.
             </p>
           </div>

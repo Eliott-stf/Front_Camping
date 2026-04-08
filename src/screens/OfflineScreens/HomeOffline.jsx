@@ -1,13 +1,12 @@
-import { Outlet } from "react-router-dom";
+import React from 'react'
+import { Outlet } from 'react-router-dom'
 
 const HomeOffline = () => {
-    return (
-        <div>
+  return (
+    <div>
+        <Outlet/>
+    </div>
+  )
+}
 
-            <Outlet /> 
-        
-        </div>
-    );
-};
-
-export default HomeOffline;
+export default HomeOffline
