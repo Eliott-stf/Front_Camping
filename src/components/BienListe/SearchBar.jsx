@@ -56,11 +56,11 @@ export default function SearchBar() {
                 <div className="flex gap-2 w-full md:w-auto">
                     <div className="w-24">
                         <label className="block text-sm font-medium text-plum-700 mb-1.5 ml-1">Adultes</label>
-                        <input type="number" min="1" value={adults} onChange={(e) => setAdults(e.target.value)} className="w-full px-4 py-3 rounded-xl border border-plum-200 bg-plum-50" />
+                        <input type="number" min="1" value={adults} onChange={(e) => setAdults(parseInt(e.target.value) || 1)}className="w-full px-4 py-3 rounded-xl border border-plum-200 bg-plum-50" />
                     </div>
                     <div className="w-24">
                         <label className="block text-sm font-medium text-plum-700 mb-1.5 ml-1">Enfants</label>
-                        <input type="number" min="0" value={children} onChange={(e) => setChildren(e.target.value)} className="w-full px-4 py-3 rounded-xl border border-plum-200 bg-plum-50" />
+                        <input type="number" min="0" value={children}onChange={(e) => setChildren(parseInt(e.target.value) || 0)}className="w-full px-4 py-3 rounded-xl border border-plum-200 bg-plum-50" />
                     </div>
                 </div>
 

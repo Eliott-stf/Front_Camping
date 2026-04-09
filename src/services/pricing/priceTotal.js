@@ -8,12 +8,11 @@ import { getPiscineTax, getSejourTax } from "./taxPrice";
  * Prix de base * nuits en tenant compte de la saisonnalité
  * Utilisé dans la LISTE des biens (sans taxes ni remise)
  */
-export const getBasePrice = (pricePerNight, startDate, endDate) => {
+export const getBasePrice = (pricePerNight, startDate, endDate, nbPersonnes = 1) => {
     const { basseSaison, hauteSaison } = splitSeasonNights(startDate, endDate);
 
-    const prixBasse = basseSaison * pricePerNight;
-    // +15% haute saison
-    const prixHaute = hauteSaison * (pricePerNight * 1.15); 
+    const prixBasse = basseSaison * pricePerNight * nbPersonnes;
+    const prixHaute = hauteSaison * (pricePerNight * 1.15) * nbPersonnes;
 
     return Math.round(prixBasse + prixHaute);
 };
@@ -26,10 +25,11 @@ export const getBasePrice = (pricePerNight, startDate, endDate) => {
 export const getFullPrice = (pricePerNight, startDate, endDate, nbAdults, nbChildren) => {
     const { basseSaison, hauteSaison } = splitSeasonNights(startDate, endDate);
     const nbNights = basseSaison + hauteSaison;
+    const nbPersonnes = nbAdults + nbChildren;
 
-    // Prix de base saisonnier
-    const prixBasse = basseSaison * pricePerNight;
-    const prixHaute = hauteSaison * (pricePerNight * 1.15);
+    // Prix de base saisonnier × nb personnes
+    const prixBasse = basseSaison * pricePerNight * nbPersonnes;
+    const prixHaute = hauteSaison * (pricePerNight * 1.15) * nbPersonnes;
     const prixBase = prixBasse + prixHaute;
 
     // Remise par tranche de 7 jours
@@ -45,6 +45,7 @@ export const getFullPrice = (pricePerNight, startDate, endDate, nbAdults, nbChil
 
     return {
         nbNights,
+        nbPersonnes,
         basseSaison,
         hauteSaison,
         prixBase: Math.round(prixBase),

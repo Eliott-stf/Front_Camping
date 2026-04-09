@@ -29,7 +29,7 @@ export const getSeason = (date) => {
     // Basse saison : 01 septembre au 10 octobre
     if ((month === 9) || (month === 10 && day <= 10)) return "basse";
 
-    return null; // hors période d'ouverture
+    return "basse"; // hors période d'ouverture
 };
 
 /**

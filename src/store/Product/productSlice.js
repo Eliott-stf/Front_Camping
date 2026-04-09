@@ -8,6 +8,7 @@ const productSlice = createSlice({
     initialState: {
         loading: false,
         availableProducts: [],
+        productDetail: null,
         startDate: null,
         endDate: null,
         adults: 1,
@@ -20,6 +21,9 @@ const productSlice = createSlice({
         setAvailableProducts: (state, action) => {
             state.availableProducts = action.payload
         },
+        setProductDetail: (state, action) => {
+            state.productDetail = action.payload
+        },
         setDates: (state, action) => {
             state.startDate = action.payload.startDate
             state.endDate = action.payload.endDate
@@ -31,7 +35,7 @@ const productSlice = createSlice({
     }
 })
 
-export const { setLoading, setAvailableProducts, setDates, setGuests } = productSlice.actions
+export const { setLoading, setAvailableProducts, setProductDetail, setDates, setGuests } = productSlice.actions
 
 // Méthode qui récupère les biens disponibles selon une période et filtre sur le type
 export const fetchAvailableProducts = (startDate, endDate, type = '', capacity = 1, adults = 1, children = 0) => async (dispatch) => {
@@ -58,6 +62,20 @@ export const fetchAvailableProducts = (startDate, endDate, type = '', capacity =
         dispatch(setAvailableProducts(products));
     } catch (error) {
         console.log(`Erreur lors de la requête des biens disponibles : ${error}`)
+    } finally {
+        dispatch(setLoading(false))
+    }
+}
+
+// Méthode qui récupère les détails d'un bien spécifique par son ID
+export const fetchProductDetail = (id) => async (dispatch) => {
+    try {
+        dispatch(setLoading(true))
+        const response = await axios.get(`${API_URL}/products/${id}`);
+        dispatch(setProductDetail(response.data));
+    } catch (error) {
+        console.log(`Erreur lors de la requête du bien détail : ${error}`)
+        dispatch(setProductDetail(null))
     } finally {
         dispatch(setLoading(false))
     }

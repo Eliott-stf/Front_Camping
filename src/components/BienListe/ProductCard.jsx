@@ -1,12 +1,13 @@
 import { Link } from "react-router-dom";
 import { API_ROOT } from "../../constants/apiConstant";
-import { getNbNights } from "../../services/pricing/datePrice";
+import { getBasePrice } from "../../services/pricing/priceTotal";
+
 
 export default function ProductCard({ product, startDate, endDate, adults, children }) {
 
-    const totalPersonnes = parseInt(adults, 10) + parseInt(children, 10);
+    const nbPersonnes = parseInt(adults, 10) + parseInt(children, 10);
     const prixTotal = startDate && endDate
-        ? (product.price * getNbNights(startDate, endDate) * totalPersonnes)
+        ? getBasePrice(product.price, startDate, endDate, nbPersonnes) 
         : product.price;
 
     const firstMedia = product.media[0];
