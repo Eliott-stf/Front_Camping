@@ -42,13 +42,13 @@ function Login() {
             const response = await axios.post(`${API_URL}/login_check`, { email, password });
 
             // Le login_check retourne maintenant token + infos user
-            const { token, id, email: userEmail, name } = response.data;
+            const { token, id, email: userEmail, name, lastname } = response.data;
 
             // Stocke le token pour les prochaines requêtes
             localStorage.setItem('token', token);
             axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
 
-            const loggedInUser = { userId: id, email: userEmail, name };
+            const loggedInUser = { userId: id, email: userEmail, name, lastname };
 
             await signIn(loggedInUser);
             setUser(loggedInUser);

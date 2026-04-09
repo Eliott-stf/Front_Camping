@@ -46,7 +46,7 @@ export default function ProductDetail() {
                 nbAdult: adults,
                 nbChildren: children,
                 products: [`/api/products/${productDetail.id}`],
-                user: `/api/users/${userId}`, // depuis useAuthContext
+                user: `/api/users/${userId}`, 
             },
             {
                 headers: { "Content-Type": "application/ld+json" }

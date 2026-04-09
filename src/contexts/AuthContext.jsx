@@ -6,9 +6,11 @@ const AuthContext = createContext({
     userId: '',
     email: '',
     name: '',
+    lastname: '',
     setUserId: () => {},
     setEmail: () => {},
     setName: () => {},
+    setLastname: () => {},
     signIn: async () => {},
     signOut: async () => {}
 });
@@ -17,6 +19,7 @@ const AuthContextProvider = ({ children }) => {
     const [userId, setUserId] = useState('');
     const [email, setEmail]   = useState('');
     const [name, setName]     = useState('');
+    const [lastname, setLastname] = useState('');
 
     // Recharge token + user au démarrage de l'app
     useEffect(() => {
@@ -31,6 +34,7 @@ const AuthContextProvider = ({ children }) => {
             setUserId(user.userId);
             setEmail(user.email);
             setName(user.name);
+            setLastname(user.lastname);
         }
     }, []);
     //méthode de connexion
@@ -39,6 +43,7 @@ const AuthContextProvider = ({ children }) => {
             setUserId(user.userId);
             setEmail(user.email);
             setName(user.name);
+            setLastname(user.lastname);
             localStorage.setItem(USER_INFOS, JSON.stringify(user));
         } catch (error) {
             throw new Error(`Erreur lors de la connexion: ${error}`);
@@ -51,6 +56,7 @@ const AuthContextProvider = ({ children }) => {
             setUserId('');
             setEmail('');
             setName('');
+            setLastname('');
             localStorage.removeItem(USER_INFOS);
             localStorage.removeItem('token');
             delete axios.defaults.headers.common['Authorization'];
@@ -59,7 +65,7 @@ const AuthContextProvider = ({ children }) => {
         }
     };
 
-    const value = { userId, email, name, setUserId, setEmail, setName, signIn, signOut };
+    const value = { userId, email, name, lastname, setUserId, setEmail, setName, signIn, signOut };
 
     return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
