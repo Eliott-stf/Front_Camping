@@ -9,7 +9,9 @@ const productSlice = createSlice({
         loading: false,
         availableProducts: [],
         startDate: null,
-        endDate: null
+        endDate: null,
+        adults: 1,
+        children: 0
     },
     reducers: {
         setLoading: (state, action) => {
@@ -22,16 +24,21 @@ const productSlice = createSlice({
             state.startDate = action.payload.startDate
             state.endDate = action.payload.endDate
         },
+        setGuests: (state, action) => {
+            state.adults = action.payload.adults;
+            state.children = action.payload.children;
+        }
     }
 })
 
-export const { setLoading, setAvailableProducts, setDates } = productSlice.actions
+export const { setLoading, setAvailableProducts, setDates, setGuests } = productSlice.actions
 
 // Méthode qui récupère les biens disponibles selon une période et filtre sur le type
-export const fetchAvailableProducts = (startDate, endDate, type = '', capacity = 1) => async (dispatch) => {
+export const fetchAvailableProducts = (startDate, endDate, type = '', capacity = 1, adults = 1, children = 0) => async (dispatch) => {
     try {
         dispatch(setLoading(true))
         dispatch(setDates({ startDate, endDate }))
+        dispatch(setGuests({ adults, children }))
         const response = await axios.get(`${API_URL}/products`, {
             params: {
                 start_date: startDate,

@@ -3,7 +3,8 @@ import SearchBar from "../../components/BienListe/SearchBar";
 import ProductCard from "../../components/BienListe/ProductCard";
 
 export default function BienListe() {
-  const { availableProducts = [], loading = false, startDate, endDate } = useSelector((state) => state.products || {});
+  const { availableProducts = [], loading = false, startDate, endDate, adults,
+    children } = useSelector((state) => state.products || {});
 
   return (
 
@@ -20,12 +21,17 @@ export default function BienListe() {
         <p className="text-center text-plum-600 py-10">Chargement des biens...</p>
       )}
 
-       {console.log(availableProducts)};
-      
+      {console.log(availableProducts)};
+
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
         {availableProducts?.map((product) => (
-          <ProductCard key={product.id} product={product} startDate={startDate} endDate={endDate} />
+          <ProductCard key={product.id}
+            product={product}
+            startDate={startDate}
+            endDate={endDate}
+            adults={adults}
+            children={children} />
         ))}
       </div>
 

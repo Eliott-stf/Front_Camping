@@ -23,7 +23,7 @@ export default function SearchBar() {
         const totalPeople = parseInt(adults) + parseInt(children);
 
         //on dispatch avec les params
-        dispatch(fetchAvailableProducts(startDate, endDate, selectedType, totalPeople));
+        dispatch(fetchAvailableProducts(startDate, endDate, selectedType, totalPeople, adults, children));
     };
 
    return (
