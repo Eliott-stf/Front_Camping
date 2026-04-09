@@ -1,4 +1,5 @@
 export default function PricingCard({ prix, onReserve }) {
+    
     return (
         <div className="bg-white rounded-2xl border border-plum-100 shadow-sm p-6 flex flex-col gap-3 h-fit">
             {prix ? (
