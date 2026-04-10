@@ -27,8 +27,7 @@ export default function ReservationCard({ reservation }) {
 
     const handleAnnuler = () => {
         if (window.confirm("Êtes-vous sûr de vouloir annuler cette réservation ?")) {
-            console.log("On supprime la résa ID :", id);
-            // Ou si tu utilises Redux directement ici : 
+            //On recup les dataaaaa
             dispatch(deleteBooking(id))
         }
     };

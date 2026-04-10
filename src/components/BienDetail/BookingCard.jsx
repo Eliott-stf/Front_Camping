@@ -6,11 +6,11 @@ export default function PricingCard({ prix, onReserve }) {
                 <>
                     <div className="flex justify-between text-sm text-plum-700">
                         <span>Durée</span>
-                        <span>{prix.nbNights +1 } jours</span>
+                        <span>{prix.nbNights + 1} jours</span>
                     </div>
                     <div className="flex justify-between text-sm text-plum-700">
                         <span>Prix de base</span>
-                        <span>{prix.prixBase}€/pers</span>
+                        <span>{prix.prixBase}€</span>
                     </div>
 
                     {prix.discountRate > 0 && (
@@ -24,10 +24,13 @@ export default function PricingCard({ prix, onReserve }) {
                         <span>Taxe de séjour</span>
                         <span>{prix.taxeSejour}€</span>
                     </div>
-                    <div className="flex justify-between text-sm text-plum-700">
-                        <span>Accès piscine</span>
-                        <span>{prix.taxePiscine}€</span>
-                    </div>
+                    
+                    {prix.prixServices > 0 && (
+                        <div className="flex justify-between text-sm text-plum-700">
+                            <span>Accès piscine</span>
+                            <span>{prix.prixServices}€</span>
+                        </div>
+                    )}
 
                     <div className="border-t border-plum-100 pt-3 flex justify-between font-medium text-plum-950 text-lg">
                         <span>Total</span>

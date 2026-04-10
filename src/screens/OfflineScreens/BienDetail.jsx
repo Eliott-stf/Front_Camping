@@ -1,16 +1,18 @@
+import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import axios from "axios";
+
+import { API_URL } from "../../constants/apiConstant";
+import { useAuthContext } from "../../contexts/AuthContext";
+import { fetchProductDetail, fetchServices } from "../../store/Product/productSlice";
 import { getFullPrice } from "../../services/pricing/priceTotal";
+
 import ButtonLoader from "../../components/Loader/ButtonLoader";
 import DescriptionDetail from "../../components/BienDetail/DescriptionDetail";
 import PricingCard from "../../components/BienDetail/BookingCard";
 import ImgDetail from "../../components/BienDetail/ImgDetail";
-import { fetchProductDetail } from "../../store/Product/productSlice";
-import axios from "axios";
-import { API_URL } from "../../constants/apiConstant";
-import { createBooking } from "../../store/Booking/bookingSlice";
-import { useAuthContext } from "../../contexts/AuthContext";
+import Options from "../../components/BienDetail/Option";
 
 export default function ProductDetail() {
   //on récupère l'id par l'url
@@ -20,54 +22,102 @@ export default function ProductDetail() {
   const navigate = useNavigate();
   //On récupère l'id de l'user
   const { userId } = useAuthContext();
-
+  //On récup nos state du store
+  const { productDetail, startDate, endDate, adults, children, loading, services } = useSelector((state) => state.products);
+  const [selectedServices, setSelectedServices] = useState([]);
+  const [prix, setPrix] = useState(null);
 
   useEffect(() => {
-    dispatch(fetchProductDetail(id))
-  }, [dispatch, id])
+    //data du biens
+    dispatch(fetchProductDetail(id));
+    //data des options (pisicne)
+    dispatch(fetchServices());
+  }, [dispatch, id]);
 
-  //On récup nos state du store
-  const { productDetail, startDate, endDate, adults, children, loading } = useSelector((state) => state.products);
+  // Recalcule le prix quand les dates, capacité ou services changent
+  useEffect(() => {
+    if (startDate && endDate && productDetail) {
+      const calculatedPrice = getFullPrice(productDetail.price, startDate, endDate, adults, children, selectedServices);
+      setPrix(calculatedPrice);
+    }
+  }, [startDate, endDate, adults, children, selectedServices, productDetail]);
 
-  if (loading) return <ButtonLoader />
+  if (loading) return <ButtonLoader />;
   if (!productDetail) return <p className="text-center pt-32 text-plum-800">Bien introuvable.</p>;
-
-  const prix = startDate && endDate
-    ? getFullPrice(productDetail.price, startDate, endDate, adults, children)
-    : null;
 
   const handleReservation = async () => {
     try {
-        const response = await axios.post(
-            `${API_URL}/bookings`,
-            {
-                startAt: startDate,
-                endAt: endDate,
-                nbAdult: adults,
-                nbChildren: children,
-                products: [`/api/products/${productDetail.id}`],
-                user: `/api/users/${userId}`, 
-            },
-            {
-                headers: { "Content-Type": "application/ld+json" }
-            }
+      // Booking de l'hébergement principal
+      await axios.post(
+        `${API_URL}/bookings`,
+        {
+          startAt: startDate,
+          endAt: endDate,
+          nbAdult: adults,
+          nbChildren: children,
+          products: [`/api/products/${productDetail.id}`],
+          user: `/api/users/${userId}`,
+        },
+        { headers: { "Content-Type": "application/ld+json" } }
+      );
+
+      // Regroupement des services pour extraire les objets uniques et leur quantité
+      const serviceQuantities = selectedServices.reduce((acc, service) => {
+        if (!acc[service.id]) {
+          acc[service.id] = { service, quantity: 0 };
+        }
+        acc[service.id].quantity += 1;
+        return acc;
+      }, {});
+
+      // 1 booking par service avec uniquement la quantité sélectionnée dans le composant Options
+      for (const key in serviceQuantities) {
+        const { service, quantity } = serviceQuantities[key];
+        const isEnfant = service.title.toLowerCase().includes('enfant');
+
+        const nbAdultService = isEnfant ? 0 : quantity;
+        const nbChildrenService = isEnfant ? quantity : 0;
+
+        // On skip si pas de personnes concernées 
+        if (nbAdultService === 0 && nbChildrenService === 0) continue;
+
+        await axios.post(
+          `${API_URL}/bookings`,
+          {
+            startAt: startDate,
+            endAt: endDate,
+            nbAdult: nbAdultService,
+            nbChildren: nbChildrenService,
+            products: [`/api/products/${service.id}`],
+            user: `/api/users/${userId}`,
+          },
+          { headers: { "Content-Type": "application/ld+json" } }
         );
-        navigate(`/`);
+      }
+
+      navigate(`/`);
     } catch (error) {
-        console.log("Erreur réservation :", error);
+      console.error("Erreur réservation :", error);
     }
-};
+  };
 
   return (
     <div className="max-w-6xl mx-auto px-6 pt-32 pb-16">
-
       <ImgDetail product={productDetail} />
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        <DescriptionDetail product={productDetail} />
+        <div>
+          <DescriptionDetail product={productDetail} />
+          <Options
+            services={services}
+            adults={adults}
+            childrenCount={children}
+            onUpdate={(updatedServices) => setSelectedServices(updatedServices)}
+          />
+        </div>
+
         <PricingCard prix={prix} adults={adults} children={children} onReserve={handleReservation} />
       </div>
-
     </div>
   );
 }

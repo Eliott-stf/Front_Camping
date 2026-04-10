@@ -12,7 +12,8 @@ const productSlice = createSlice({
         startDate: null,
         endDate: null,
         adults: 1,
-        children: 0
+        children: 0,
+        services: []
     },
     reducers: {
         setLoading: (state, action) => {
@@ -31,11 +32,14 @@ const productSlice = createSlice({
         setGuests: (state, action) => {
             state.adults = action.payload.adults;
             state.children = action.payload.children;
-        }
+        },
+        setServices: (state, action) => {
+            state.services = action.payload
+        },
     }
 })
 
-export const { setLoading, setAvailableProducts, setProductDetail, setDates, setGuests } = productSlice.actions
+export const { setLoading, setAvailableProducts, setProductDetail, setDates, setGuests, setServices } = productSlice.actions
 
 // Méthode qui récupère les biens disponibles selon une période et filtre sur le type
 export const fetchAvailableProducts = (startDate, endDate, type = '', capacity = 1, adults = 1, children = 0) => async (dispatch) => {
@@ -78,6 +82,15 @@ export const fetchProductDetail = (id) => async (dispatch) => {
         dispatch(setProductDetail(null))
     } finally {
         dispatch(setLoading(false))
+    }
+}
+//méthode qui récupère les product du type service
+export const fetchServices = () => async (dispatch) => {
+    try {
+        const response = await axios.get(`${API_URL}/products?type=service`)
+        dispatch(setServices(response.data.member))
+    } catch (error) {
+        console.log(`Erreur fetchServices : ${error}`)
     }
 }
 

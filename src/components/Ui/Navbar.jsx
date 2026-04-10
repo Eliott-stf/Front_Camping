@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { CiMenuFries } from "react-icons/ci";
 import { AiOutlineClose } from "react-icons/ai";
+import { FaRegUser } from "react-icons/fa";
 import { useAuthContext } from "../../contexts/AuthContext";
 import { dataNavbar } from "../../constants/appConstant";
 import Navlinks from "./Navlinks";
@@ -26,8 +27,13 @@ export default function Navbar() {
                     className="px-5 py-2 rounded-full text-sm font-medium transition-all duration-300 no-underline text-plum-700 hover:bg-plum-700 hover:text-white [&.active]:bg-plum-700 [&.active]:text-white [&.active]:shadow-md"
                 />
 
-                <Link to="#contact" className="hidden md:block bg-plum-600 text-white px-4 py-2 rounded-md shadow-sm hover:bg-plum-700 focus:ring-2 focus:ring-plum-500 focus:outline-none transition-all no-underline text-sm">
-                    Réserver
+                {/* Bouton Desktop */}
+                <Link 
+                    to={userId ? "/compte" : "/login"} 
+                    className="hidden md:flex items-center gap-2 bg-plum-600 text-white px-4 py-2 rounded-md shadow-sm hover:bg-plum-700 focus:ring-2 focus:ring-plum-500 focus:outline-none transition-all no-underline text-sm font-medium"
+                >
+                    <FaRegUser className="w-4 h-4" />
+                    <span>Mon compte</span>
                 </Link>
 
                 <button
@@ -48,8 +54,14 @@ export default function Navbar() {
                         className="block px-4 py-3 rounded-xl text-sm font-medium transition-all no-underline text-plum-700 hover:bg-plum-700 hover:text-white [&.active]:bg-plum-700 [&.active]:text-white"
                     />
 
-                    <Link to="#contact" onClick={() => setMobileOpen(false)} className="block bg-plum-600 text-white px-4 py-2 rounded-md shadow-sm hover:bg-plum-700 focus:ring-2 focus:ring-plum-500 focus:outline-none transition-all text-center no-underline mt-3 text-sm">
-                        Réserver
+                    {/* Bouton Mobile */}
+                    <Link 
+                        to={userId ? "/compte" : "/login"} 
+                        onClick={() => setMobileOpen(false)} 
+                        className="flex items-center justify-center gap-2 bg-plum-600 text-white px-4 py-3 rounded-md shadow-sm hover:bg-plum-700 focus:ring-2 focus:ring-plum-500 focus:outline-none transition-all text-center no-underline mt-4 text-sm font-medium"
+                    >
+                        <FaRegUser className="w-4 h-4" />
+                        <span>Mon compte</span>
                     </Link>
                 </div>
             )}

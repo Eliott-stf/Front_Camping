@@ -21,9 +21,6 @@ export default function BienListe() {
         <p className="text-center text-plum-600 py-10">Chargement des biens...</p>
       )}
 
-      {console.log(availableProducts)};
-
-
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
         {availableProducts?.map((product) => (
           <ProductCard key={product.id}
