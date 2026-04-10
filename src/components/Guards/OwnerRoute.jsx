@@ -4,9 +4,13 @@ import { ROLES } from "../../constants/appConstant";
 import ErrorPage from "../../screens/ErrorScreens/ErrorPage";
 
 const OwnerRoute = () => {
-    const { roles } = useAuthContext();
+    const { role } = useAuthContext();
 
-    return roles.includes(ROLES.OWNER)
+    // role peut être un string ou un array selon le backend
+    const isArray = Array.isArray(role);
+    const hasOwnerRole = isArray ? role.includes(ROLES.OWNER) : role === ROLES.OWNER;
+
+    return hasOwnerRole
         ? <Outlet />
         : <ErrorPage />;
 };

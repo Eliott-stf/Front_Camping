@@ -28,7 +28,7 @@ const AppRouter = () => {
     const [inSession, setInSession] = useState(null);
 
     //récupérer les fonctions du context d'authentification
-    const { userId, setUserId, setEmail, setName } = useAuthContext();
+    const { userId, setUserId, setEmail, setName, setRole } = useAuthContext();
 
     //récupèration des données utilisateur du localStorage
     const userInfos = JSON.parse(localStorage.getItem(USER_INFOS))
@@ -43,6 +43,7 @@ const AppRouter = () => {
                 setUserId(userInfos.userId);
                 setEmail(userInfos.email);
                 setName(userInfos.name);
+                setRole(userInfos.role || '');
                 setInSession(true);
             } else {
                 //aucune session utilisateur trouvée

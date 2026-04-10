@@ -5,9 +5,7 @@ import ErrorPage from '../screens/ErrorScreens/ErrorPage';
 import Home from '../screens/OfflineScreens/Home';
 import BienListe from '../screens/OfflineScreens/BienListe';
 import BienDetail from '../screens/OfflineScreens/BienDetail';
-import Reservation from '../screens/OnlineScreens/Reservation';
 import Compte from '../screens/OnlineScreens/Compte';
-import MesReservations from '../screens/OnlineScreens/MesReservations';
 import OwnerRoute from '../components/Guards/OwnerRoute';
 import { OwnerPlanning } from '../screens/OnlineScreens/Owner/OwnerPlanning';
 import OwnerRetribution from '../screens/OnlineScreens/Owner/OwnerRetribution';
@@ -39,16 +37,8 @@ const OnlineRouter = createBrowserRouter([
                 element: <BienDetail />,  //Element retourné
             },
             {
-                path: "/reservation",   //Chemin de la vue 
-                element: <Reservation />,  //Element retourné
-            },
-            {
                 path: "/compte",   //Chemin de la vue 
                 element: <Compte />,  //Element retourné
-            },
-            {
-                path: "/mes-reservations",   //Chemin de la vue 
-                element: <MesReservations />,  //Element retourné
             },
             // ===========================
             // ROUTES ROLE_OWNER
@@ -73,7 +63,7 @@ const OnlineRouter = createBrowserRouter([
                 element: <AdminRoute />,   // Guard vérifie ROLE_ADMIN
                 children: [
                     {
-                        path: "/admin",   
+                        path: "/dashboard",   
                         element: <AdminDashboard/>,  
                     },
                     {

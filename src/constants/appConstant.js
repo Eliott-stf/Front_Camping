@@ -9,9 +9,9 @@ export const USER_INFOS = "userInfos"
 // CONFIG DES ROLES
 // ====================
 export const ROLES = {
-    ADMIN: "ADMIN",
-    USER: "USER",
-    OWNER: "OWNER"
+    ADMIN: "ROLE_ADMIN",
+    USER: "ROLE_USER",
+    OWNER: "ROLE_OWNER"
 };
 
 // ============================

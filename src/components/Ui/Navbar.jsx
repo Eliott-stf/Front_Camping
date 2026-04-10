@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { CiMenuFries, CiLogout } from "react-icons/ci";
 import { AiOutlineClose } from "react-icons/ai";
 import { FaRegUser } from "react-icons/fa";
+import { MdOutlineSpaceDashboard } from "react-icons/md";
 import { useAuthContext } from "../../contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { dataNavbar } from "../../constants/appConstant";
@@ -11,7 +12,8 @@ import { IMAGE_URL } from "../../constants/apiConstant";
 
 export default function Navbar() {
     const [mobileOpen, setMobileOpen] = useState(false);
-    const { userId, signOut } = useAuthContext();
+    // Assurez-vous que 'role' est bien exposé par votre AuthContext
+    const { userId, role, signOut } = useAuthContext();
     const navigate = useNavigate();
     const ImgSrc = `${IMAGE_URL}/logo.png`;
 
@@ -41,6 +43,15 @@ export default function Navbar() {
                 <div className="hidden md:flex items-center gap-2">
                     {userId ? (
                         <>
+                            {role?.includes("ROLE_ADMIN") && (
+                                <Link
+                                    to="/dashboard"
+                                    className="flex items-center gap-2 bg-slate-800 text-white px-4 py-2 rounded-md shadow-sm hover:bg-slate-900 focus:ring-2 focus:ring-slate-500 focus:outline-none transition-all no-underline text-sm font-medium"
+                                >
+                                    <MdOutlineSpaceDashboard className="w-4 h-4" />
+                                    <span>Dashboard</span>
+                                </Link>
+                            )}
                             <Link
                                 to="/compte"
                                 className="flex items-center gap-2 bg-plum-600 text-white px-4 py-2 rounded-md shadow-sm hover:bg-plum-700 focus:ring-2 focus:ring-plum-500 focus:outline-none transition-all no-underline text-sm font-medium"
@@ -89,6 +100,16 @@ export default function Navbar() {
                     <div className="space-y-2 mt-4">
                         {userId ? (
                             <>
+                                  {role?.includes("ROLE_ADMIN") && (
+                                    <Link
+                                        to="/dashboard"
+                                        onClick={() => setMobileOpen(false)}
+                                        className="flex items-center justify-center gap-2 bg-slate-800 text-white px-4 py-3 rounded-md shadow-sm hover:bg-slate-900 focus:ring-2 focus:ring-slate-500 focus:outline-none transition-all text-center no-underline text-sm font-medium"
+                                    >
+                                        <MdOutlineSpaceDashboard className="w-4 h-4" />
+                                        <span>Dashboard</span>
+                                    </Link>
+                                )}
                                 <Link
                                     to="/compte"
                                     onClick={() => setMobileOpen(false)}

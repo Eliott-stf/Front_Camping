@@ -7,19 +7,22 @@ const AuthContext = createContext({
     email: '',
     name: '',
     lastname: '',
-    setUserId: () => {},
-    setEmail: () => {},
-    setName: () => {},
-    setLastname: () => {},
-    signIn: async () => {},
-    signOut: async () => {}
+    role: '',
+    setUserId: () => { },
+    setEmail: () => { },
+    setName: () => { },
+    setLastname: () => { },
+    setRole: () => { },
+    signIn: async () => { },
+    signOut: async () => { }
 });
 
 const AuthContextProvider = ({ children }) => {
     const [userId, setUserId] = useState('');
-    const [email, setEmail]   = useState('');
-    const [name, setName]     = useState('');
+    const [email, setEmail] = useState('');
+    const [name, setName] = useState('');
     const [lastname, setLastname] = useState('');
+    const [role, setRole] = useState('');
 
     // Recharge token + user au démarrage de l'app
     useEffect(() => {
@@ -35,6 +38,7 @@ const AuthContextProvider = ({ children }) => {
             setEmail(user.email);
             setName(user.name);
             setLastname(user.lastname);
+            setRole(user.role || '');
         }
     }, []);
     //méthode de connexion
@@ -44,6 +48,7 @@ const AuthContextProvider = ({ children }) => {
             setEmail(user.email);
             setName(user.name);
             setLastname(user.lastname);
+            setRole(user.role || '');
             localStorage.setItem(USER_INFOS, JSON.stringify(user));
         } catch (error) {
             throw new Error(`Erreur lors de la connexion: ${error}`);
@@ -57,6 +62,7 @@ const AuthContextProvider = ({ children }) => {
             setEmail('');
             setName('');
             setLastname('');
+            setRole('');
             localStorage.removeItem(USER_INFOS);
             localStorage.removeItem('token');
             delete axios.defaults.headers.common['Authorization'];
@@ -65,7 +71,7 @@ const AuthContextProvider = ({ children }) => {
         }
     };
 
-    const value = { userId, email, name, lastname, setUserId, setEmail, setName, signIn, signOut };
+    const value = { userId, email, name, lastname, role, setUserId, setEmail, setName, setRole, signIn, signOut };
 
     return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
