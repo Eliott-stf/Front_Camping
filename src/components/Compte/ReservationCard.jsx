@@ -74,7 +74,6 @@ export default function ReservationCard({ reservation }) {
                     Annuler
                 </button>
             </div>
-
         </div>
     );
 

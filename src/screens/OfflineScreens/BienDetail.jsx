@@ -46,66 +46,75 @@ export default function ProductDetail() {
   if (!productDetail) return <p className="text-center pt-32 text-plum-800">Bien introuvable.</p>;
 
   const handleReservation = async () => {
-    try {
-      // Vérification de l'authentification
-      if (!userId) {
-        // Redirige vers login en passant l'URL actuelle pour revenir après connexion
+    if (!userId) {
         navigate("/login", { state: { from: `/product/${id}` } });
         return;
-      }
-      // Booking de l'hébergement principal
-      await axios.post(
-        `${API_URL}/bookings`,
-        {
-          startAt: startDate,
-          endAt: endDate,
-          nbAdult: adults,
-          nbChildren: children,
-          products: [`/api/products/${productDetail.id}`],
-          user: `/api/users/${userId}`,
-        },
-        { headers: { "Content-Type": "application/ld+json" } }
-      );
-
-      // Regroupement des services pour extraire les objets uniques et leur quantité
-      const serviceQuantities = selectedServices.reduce((acc, service) => {
-        if (!acc[service.id]) {
-          acc[service.id] = { service, quantity: 0 };
-        }
-        acc[service.id].quantity += 1;
-        return acc;
-      }, {});
-
-      // 1 booking par service avec uniquement la quantité sélectionnée dans le composant Options
-      for (const key in serviceQuantities) {
-        const { service, quantity } = serviceQuantities[key];
-        const isEnfant = service.title.toLowerCase().includes('enfant');
-
-        const nbAdultService = isEnfant ? 0 : quantity;
-        const nbChildrenService = isEnfant ? quantity : 0;
-
-        // On skip si pas de personnes concernées 
-        if (nbAdultService === 0 && nbChildrenService === 0) continue;
-
-        await axios.post(
-          `${API_URL}/bookings`,
-          {
-            startAt: startDate,
-            endAt: endDate,
-            nbAdult: nbAdultService,
-            nbChildren: nbChildrenService,
-            products: [`/api/products/${service.id}`],
-            user: `/api/users/${userId}`,
-          },
-          { headers: { "Content-Type": "application/ld+json" } }
-        );
-      }
-
-      navigate(`/`);
-    } catch (error) {
-      console.error("Erreur réservation :", error);
     }
-  };
+
+    try {
+        const generatedBookingIds = [];
+
+        // 1. Booking de l'hébergement principal
+        const mainRes = await axios.post(
+            `${API_URL}/bookings`,
+            {
+                startAt: startDate,
+                endAt: endDate,
+                nbAdult: adults,
+                nbChildren: children,
+                products: [`/api/products/${productDetail.id}`],
+                user: `/api/users/${userId}`,
+            },
+            { headers: { "Content-Type": "application/ld+json" } }
+        );
+        generatedBookingIds.push(mainRes.data.id); // On stocke l'ID
+
+        // 2. Booking des services
+        const serviceQuantities = selectedServices.reduce((acc, service) => {
+            if (!acc[service.id]) acc[service.id] = { service, quantity: 0 };
+            acc[service.id].quantity += 1;
+            return acc;
+        }, {});
+
+        for (const key in serviceQuantities) {
+            const { service, quantity } = serviceQuantities[key];
+            const isEnfant = service.title.toLowerCase().includes('enfant');
+            
+            const nbAdultService   = isEnfant ? 0 : quantity;
+            const nbChildrenService = isEnfant ? quantity : 0;
+
+            if (nbAdultService === 0 && nbChildrenService === 0) continue;
+
+            const servRes = await axios.post(
+                `${API_URL}/bookings`,
+                {
+                    startAt: startDate,
+                    endAt: endDate,
+                    nbAdult: nbAdultService,
+                    nbChildren: nbChildrenService,
+                    products: [`/api/products/${service.id}`],
+                    user: `/api/users/${userId}`,
+                },
+                { headers: { "Content-Type": "application/ld+json" } }
+            );
+            generatedBookingIds.push(servRes.data.id); // On stocke l'ID
+        }
+
+        // 3. Génération de la facture unique regroupant tout
+        await axios.post(
+            `${API_URL}/checkout/invoice`,
+            {
+                bookingIds: generatedBookingIds,
+                userId: userId 
+            },
+            { headers: { "Content-Type": "application/json" } } // Important : json classique ici, pas ld+json
+        );
+
+        navigate(`/`);
+    } catch (error) {
+        console.error("Erreur réservation :", error);
+    }
+};
 
   return (
     <div className="max-w-6xl mx-auto px-6 pt-32 pb-16">
