@@ -47,6 +47,12 @@ export default function ProductDetail() {
 
   const handleReservation = async () => {
     try {
+      // Vérification de l'authentification
+      if (!userId) {
+        // Redirige vers login en passant l'URL actuelle pour revenir après connexion
+        navigate("/login", { state: { from: `/product/${id}` } });
+        return;
+      }
       // Booking de l'hébergement principal
       await axios.post(
         `${API_URL}/bookings`,

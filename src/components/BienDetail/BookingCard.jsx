@@ -1,5 +1,9 @@
+import { useAuthContext } from "../../contexts/AuthContext";
+
 export default function PricingCard({ prix, onReserve }) {
     
+const { userId } = useAuthContext();
+
     return (
         <div className="bg-white rounded-2xl border border-plum-100 shadow-sm p-6 flex flex-col gap-3 h-fit">
             {prix ? (
@@ -24,7 +28,7 @@ export default function PricingCard({ prix, onReserve }) {
                         <span>Taxe de séjour</span>
                         <span>{prix.taxeSejour}€</span>
                     </div>
-                    
+
                     {prix.prixServices > 0 && (
                         <div className="flex justify-between text-sm text-plum-700">
                             <span>Accès piscine</span>
@@ -45,10 +49,10 @@ export default function PricingCard({ prix, onReserve }) {
 
             <button
                 onClick={onReserve}
-                disabled={!prix} // On empêche la réservation si on n'a pas de dates/prix
-                className="mt-2 w-full py-3 bg-plum-600 text-white font-medium rounded-xl hover:bg-plum-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                disabled={!prix}
+                className="mt-2 w-full py-3 bg-plum-600 text-white font-medium rounded-xl hover:bg-plum-700 transition-all disabled:opacity-50"
             >
-                Je réserve ce séjour
+                {userId ? "Je réserve ce séjour" : "Connectez-vous pour réserver"}
             </button>
         </div>
     );
