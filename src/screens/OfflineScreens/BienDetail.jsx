@@ -34,7 +34,7 @@ export default function ProductDetail() {
     dispatch(fetchServices());
   }, [dispatch, id]);
 
-  // Recalcule le prix quand les dates, capacité ou services changent
+  // Recalcule le prix quand les dates, capacité ou services change
   useEffect(() => {
     if (startDate && endDate && productDetail) {
       const calculatedPrice = getFullPrice(productDetail.price, startDate, endDate, adults, children, selectedServices);
@@ -54,7 +54,7 @@ export default function ProductDetail() {
     try {
         const generatedBookingIds = [];
 
-        // 1. Booking de l'hébergement principal
+        // booking de l'hébergement principal
         const mainRes = await axios.post(
             `${API_URL}/bookings`,
             {
@@ -69,7 +69,7 @@ export default function ProductDetail() {
         );
         generatedBookingIds.push(mainRes.data.id); // On stocke l'ID
 
-        // 2. Booking des services
+        // ET booking des services
         const serviceQuantities = selectedServices.reduce((acc, service) => {
             if (!acc[service.id]) acc[service.id] = { service, quantity: 0 };
             acc[service.id].quantity += 1;
@@ -100,7 +100,7 @@ export default function ProductDetail() {
             generatedBookingIds.push(servRes.data.id); // On stocke l'ID
         }
 
-        // 3. Génération de la facture unique regroupant tout
+        // On génére la facture unique regroupant tout
         await axios.post(
             `${API_URL}/checkout/invoice`,
             {
