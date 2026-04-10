@@ -17,10 +17,12 @@ const bookingSlice = createSlice({
         setUserBookings: (state, action) => { state.userBookings = action.payload },
         setAllBookings: (state, action) => { state.allBookings = action.payload },
         setError: (state, action) => { state.error = action.payload },
+        removeBooking: (state, action) => {state.userBookings = state.userBookings.filter(booking => booking.id !== action.payload);
+}
     }
 })
 
-export const { setLoading, setCurrentBooking, setUserBookings, setAllBookings, setError } = bookingSlice.actions
+export const { setLoading, setCurrentBooking, setUserBookings, setAllBookings, setError, removeBooking } = bookingSlice.actions
 
 // Créer une réservation
 export const createBooking = (productId, startDate, endDate, nbAdult, nbChildren) => async (dispatch) => {
@@ -43,6 +45,25 @@ export const createBooking = (productId, startDate, endDate, nbAdult, nbChildren
         dispatch(setLoading(false))
     }
 }
+
+//Annuler une réservation
+export const deleteBooking = (id) => async (dispatch) => {
+    try {
+        const token = localStorage.getItem('token');
+        dispatch(setLoading(true));
+        await axios.delete(`${API_URL}/bookings/${id}`), {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        };
+        dispatch(removeBooking(id));
+    } catch (error) {
+        dispatch(setError("Erreur lors de la suppression de la réservation."));
+        console.error(`Erreur deleteBooking :`, error);
+    } finally {
+        dispatch(setLoading(false));
+    }
+};
 
 // Réservations de l'user connecté
 export const fetchBookingsByUser = (userId) => async (dispatch) => {
