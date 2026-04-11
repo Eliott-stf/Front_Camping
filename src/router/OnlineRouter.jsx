@@ -1,6 +1,7 @@
 import React from 'react'
 import { createBrowserRouter } from 'react-router-dom';
 import App from "../App";
+import AdminLayout from '../components/Layouts/AdminLayout';
 import ErrorPage from '../screens/ErrorScreens/ErrorPage';
 import Home from '../screens/OfflineScreens/Home';
 import BienListe from '../screens/OfflineScreens/BienListe';
@@ -17,6 +18,7 @@ import AdminReservation from '../screens/OnlineScreens/Admin/AdminReservation';
 import AdminReservationDetail from '../screens/OnlineScreens/Admin/AdminReservationDetail';
 import AdminFacture from '../screens/OnlineScreens/Admin/AdminFacture';
 import AdminFactureDetail from '../screens/OnlineScreens/Admin/AdminFactureDetail';
+import AdminBiens from '../screens/OnlineScreens/Admin/AdminBiens';
 
 const OnlineRouter = createBrowserRouter([
 
@@ -56,15 +58,25 @@ const OnlineRouter = createBrowserRouter([
                     },
                 ]
             },
-            // ===========================
-            // ROUTES ROLE_ADMIN
-            // ===========================
+        ]
+    },
+    // ===========================
+    // ROUTES ROLE_ADMIN with AdminLayout
+    // ===========================
+    {
+        element: <AdminRoute />,
+        errorElement: <ErrorPage />,
+        children: [
             {
-                element: <AdminRoute />,   // Guard vérifie ROLE_ADMIN
+                element: <AdminLayout />,
                 children: [
                     {
                         path: "/dashboard",   
                         element: <AdminDashboard/>,  
+                    },
+                    {
+                        path: "/admin/biens",   
+                        element: <AdminBiens/>,  
                     },
                     {
                         path: "/admin/biens/edit/:id",   
@@ -91,7 +103,7 @@ const OnlineRouter = createBrowserRouter([
                         element: <AdminFactureDetail/>,  
                     },
                 ]
-            },
+            }
         ]
     }
 ]);

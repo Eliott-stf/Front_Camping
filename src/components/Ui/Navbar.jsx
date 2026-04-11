@@ -45,7 +45,7 @@ export default function Navbar() {
                         <>
                             {role?.includes("ROLE_ADMIN") && (
                                 <Link
-                                    to="/dashboard"
+                                    to="/admin/biens"
                                     className="flex items-center gap-2 bg-slate-800 text-white px-4 py-2 rounded-md shadow-sm hover:bg-slate-900 focus:ring-2 focus:ring-slate-500 focus:outline-none transition-all no-underline text-sm font-medium"
                                 >
                                     <MdOutlineSpaceDashboard className="w-4 h-4" />
@@ -102,7 +102,7 @@ export default function Navbar() {
                             <>
                                   {role?.includes("ROLE_ADMIN") && (
                                     <Link
-                                        to="/dashboard"
+                                        to="/admin/biens"
                                         onClick={() => setMobileOpen(false)}
                                         className="flex items-center justify-center gap-2 bg-slate-800 text-white px-4 py-3 rounded-md shadow-sm hover:bg-slate-900 focus:ring-2 focus:ring-slate-500 focus:outline-none transition-all text-center no-underline text-sm font-medium"
                                     >

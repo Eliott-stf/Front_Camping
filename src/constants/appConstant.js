@@ -1,4 +1,7 @@
+import { FaCampground } from "react-icons/fa";
 import { IMAGE_URL } from "./apiConstant";
+import { MdOutlinePeople } from "react-icons/md";
+import { TbReceiptEuro } from "react-icons/tb";
 // ====================
 // CLE DU LOCAL STORAGE
 // ====================
@@ -22,6 +25,17 @@ export const ROLES = {
 export const dataNavbar = [
     { title: "Accueil", path: "/"},
     { title: "Hebergement", path: "/biens" },
+]
+
+// ============================
+// CONFIG DU DASHBOARD
+// ============================
+
+//Navigation principale 
+export const dataDashboard = [
+    { title: "Biens", path: "/admin/biens", icon: FaCampground },
+    { title: "Facturation", path: "/admin/facture", icon: TbReceiptEuro },
+    { title: "Propriétaires", path: "/admin/proprietaires", icon: MdOutlinePeople },
 ]
 
 // ============================
