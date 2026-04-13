@@ -130,4 +130,38 @@ export const fetchServices = () => async (dispatch) => {
     }
 }
 
+/**
+ * Méthode d'ajout, d'edit et suppression d'un prodcut 
+ */
+export const createProduct = (data) => async (dispatch) => {
+    try {
+        await axios.post(`${API_URL}/products`, data, {
+            headers: { "Content-Type": "application/ld+json" }
+        })
+        dispatch(fetchAllProducts())
+    } catch (error) {
+        console.log(`Erreur createProduct : ${error}`)
+    }
+}
+
+export const updateProduct = (id, data) => async (dispatch) => {
+    try {
+        await axios.patch(`${API_URL}/products/${id}`, data, {
+            headers: { "Content-Type": "application/merge-patch+json" }
+        })
+        dispatch(fetchAllProducts())
+    } catch (error) {
+        console.log(`Erreur updateProduct : ${error}`)
+    }
+}
+
+export const deleteProduct = (id) => async (dispatch) => {
+    try {
+        await axios.delete(`${API_URL}/products/${id}`)
+        dispatch(fetchAllProducts())
+    } catch (error) {
+        console.log(`Erreur deleteProduct : ${error}`)
+    }
+}
+
 export default productSlice.reducer;

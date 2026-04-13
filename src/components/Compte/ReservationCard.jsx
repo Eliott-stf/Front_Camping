@@ -1,7 +1,7 @@
 import { CiCalendar } from "react-icons/ci";
 import { FiUsers } from "react-icons/fi";
 import { getNbNights } from "../../services/pricing/datePrice";
-import { API_ROOT } from "../../constants/apiConstant";
+import { getImageUrl } from "../../lib/utils";
 import { formaterDate } from "../../services/formateDate"
 import { Link } from "react-router-dom";
 import { FaRegTrashAlt } from "react-icons/fa";
@@ -17,7 +17,7 @@ export default function ReservationCard({ reservation }) {
     //variables d'affichage 
     const product = products?.[0];
     const media = product?.media?.[0];
-    const imgSrc = media?.path ? `${API_ROOT}${media.path}` : null;
+    const imgSrc = getImageUrl(media?.path);
     const nbNights = startAt && endAt ? getNbNights(startAt, endAt) : 0;
     const nbPersonnes = (nbAdult ?? 0) + (nbChildren ?? 0);
 

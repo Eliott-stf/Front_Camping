@@ -1,13 +1,22 @@
-import { FaChevronRight } from 'react-icons/fa6';
-import { API_ROOT } from '../../constants/apiConstant';
+import { FaChevronRight, FaTrash } from 'react-icons/fa6';
+import { getImageUrl } from '../../lib/utils';
+import { useDispatch } from 'react-redux';
+import { deleteProduct } from '../../store/Product/productSlice';
 
 export default function BienCard({ bien, onSelect }) {
+  const dispatch = useDispatch();
   const firstMedia = bien.media?.[0];
-  const imgSrc = firstMedia?.path
-    ? `${API_ROOT}${firstMedia.path}`
-    : 'https://images.unsplash.com/photo-1560518883-ce09059eeffa?q=80&w=200&h=200&auto=format&fit=crop';
+  const imgSrc = getImageUrl(firstMedia?.path, 'https://images.unsplash.com/photo-1560518883-ce09059eeffa?q=80&w=200&h=200&auto=format&fit=crop');
+
   const isProprietaire = bien.user?.some(u => u.isOwner === true);
   const proprio = isProprietaire ? bien.user.find(u => u.isOwner === true) : null;
+
+  const handleDelete = (e) => {
+    e.stopPropagation();
+    if (window.confirm(`Supprimer "${bien.title}" ?`)) {
+      dispatch(deleteProduct(bien.id));
+    }
+  };
 
   return (
     <div
@@ -16,32 +25,27 @@ export default function BienCard({ bien, onSelect }) {
     >
       <div className="flex items-center gap-4">
         <div className="w-16 h-16 rounded-lg overflow-hidden bg-plum-100 shrink-0">
-          <img
-            src={imgSrc}
-            alt={bien.title}
-            className="w-full h-full object-cover"
-          />
+          <img src={imgSrc} alt={bien.title} className="w-full h-full object-cover" />
         </div>
 
         <div className="flex-1 min-w-0 flex items-center justify-between gap-4">
           <div className="flex-1 min-w-0">
-            <h4 className="text-sm font-semibold text-plum-950 truncate">
-              {bien.title}
-            </h4>
+            <h4 className="text-sm font-semibold text-plum-950 truncate">{bien.title}</h4>
             {proprio && (
               <p className="text-xs text-plum-400 mt-0.5 truncate">
                 Propriétaire : {proprio.name} {proprio.lastname}
               </p>
             )}
-            <p className="text-xs text-plum-400 mt-0.5 truncate">
-              {bien.type}
-            </p>
           </div>
 
           <div className="flex items-center gap-3 shrink-0">
-            <span className="text-base font-bold text-plum-700 font-display">
-              {bien.price}€
-            </span>
+            <span className="text-base font-bold text-plum-700 font-display">{bien.price}€</span>
+            <button
+              onClick={handleDelete}
+              className="p-1.5 rounded-lg hover:bg-red-50 text-plum-300 hover:text-red-500 transition-colors"
+            >
+              <FaTrash className="w-3.5 h-3.5" />
+            </button>
             <FaChevronRight className="w-4 h-4 text-plum-300 group-hover:text-plum-600 transition-colors" />
           </div>
         </div>

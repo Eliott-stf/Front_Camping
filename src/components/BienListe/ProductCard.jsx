@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { API_ROOT } from "../../constants/apiConstant";
+import { getImageUrl } from "../../lib/utils";
 import { getBasePrice } from "../../services/pricing/priceTotal";
 
 
@@ -7,13 +7,11 @@ export default function ProductCard({ product, startDate, endDate, adults, child
 
     const nbPersonnes = parseInt(adults, 10) + parseInt(children, 10);
     const prixTotal = startDate && endDate
-        ? getBasePrice(product.price, startDate, endDate, nbPersonnes) 
+        ? getBasePrice(product.price, startDate, endDate, nbPersonnes)
         : product.price;
 
     const firstMedia = product.media[0];
-    const imgSrc = firstMedia?.path
-        ? `${API_ROOT}${firstMedia.path}`
-        : null;
+    const imgSrc = getImageUrl(firstMedia?.path);
 
     return (
         <div className="bg-white rounded-3xl p-5 shadow-sm border border-plum-50 hover:shadow-md transition-all duration-300 w-full">

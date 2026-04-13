@@ -1,4 +1,4 @@
-import { API_ROOT } from "../../constants/apiConstant";
+import { getImageUrl } from "../../lib/utils";
 
 export default function ImgDetail({ product }) {
   const medias = product?.media || [];
@@ -15,7 +15,7 @@ export default function ImgDetail({ product }) {
         <div className="lg:col-span-2 rounded-2xl overflow-hidden bg-plum-100 h-300px lg:h-full">
           {medias[0]?.path ? (
             <img
-              src={`${API_ROOT}${medias[0].path}`}
+              src={getImageUrl(medias[0].path)}
               alt={product.title}
               className="w-full h-full object-cover"
             />
@@ -32,7 +32,7 @@ export default function ImgDetail({ product }) {
             <div key={i} className="rounded-2xl overflow-hidden bg-plum-100 relative">
               {media?.path ? (
                 <img
-                  src={`${API_ROOT}${media.path}`}
+                  src={getImageUrl(media.path)}
                   alt={`${product.title} ${i + 2}`}
                   className="w-full h-full object-cover absolute inset-0"
                 />
