@@ -12,13 +12,12 @@ import { OwnerPlanning } from '../screens/OnlineScreens/Owner/OwnerPlanning';
 import OwnerRetribution from '../screens/OnlineScreens/Owner/OwnerRetribution';
 import AdminRoute from '../components/Guards/AdminRoute';
 import AdminDashboard from '../screens/OnlineScreens/Admin/AdminDashboard';
-import AdminBiensEdit from '../screens/OnlineScreens/Admin/AdminBiensEdit';
-import AdminBiensNew from '../screens/OnlineScreens/Admin/AdminBiensNew';
 import AdminReservation from '../screens/OnlineScreens/Admin/AdminReservation';
 import AdminReservationDetail from '../screens/OnlineScreens/Admin/AdminReservationDetail';
 import AdminFacture from '../screens/OnlineScreens/Admin/AdminFacture';
 import AdminBiens from '../screens/OnlineScreens/Admin/AdminBiens';
 import AdminProprio from '../screens/OnlineScreens/Admin/AdminProprio';
+import AdminPlanning from '../screens/OnlineScreens/Admin/AdminPlanning';
 
 const OnlineRouter = createBrowserRouter([
 
@@ -75,16 +74,12 @@ const OnlineRouter = createBrowserRouter([
                         element: <AdminDashboard/>,  
                     },
                     {
+                        path: "/admin/planning",   
+                        element: <AdminPlanning/>,  
+                    },
+                    {
                         path: "/admin/biens",   
                         element: <AdminBiens/>,  
-                    },
-                    {
-                        path: "/admin/biens/edit/:id",   
-                        element: <AdminBiensEdit/>,  
-                    },
-                    {
-                        path: "/admin/biens/new",   
-                        element: <AdminBiensNew/>,  
                     },
                     {
                         path: "/admin/reservations",   

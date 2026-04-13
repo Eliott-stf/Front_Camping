@@ -85,16 +85,38 @@ export const fetchBookingsByUser = (userId) => async (dispatch) => {
     }
 };
 
-// Toutes les réservations (admin)
+// Toutes les réservations (admin) - Pagination complète
 export const fetchAllBookings = () => async (dispatch) => {
     try {
         dispatch(setLoading(true))
-        const response = await axios.get(`${API_URL}/bookings`, {
+
+        // Première page pour récupérer totalItems
+        const firstResponse = await axios.get(`${API_URL}/bookings`, {
             params: {
+                page: 1,
                 'products.type': 'hebergement'
             }
         });
-        dispatch(setAllBookings(response.data.member))
+
+        const totalItems = firstResponse.data.totalItems;
+        const itemsPerPage = 30; // défaut API Platform
+        const totalPages = Math.ceil(totalItems / itemsPerPage);
+
+        let allBookings = firstResponse.data.member || [];
+
+        // Récupérer les pages restantes
+        for (let page = 2; page <= totalPages; page++) {
+            const response = await axios.get(`${API_URL}/bookings`, {
+                params: {
+                    page,
+                    'products.type': 'hebergement'
+                }
+            });
+            allBookings = [...allBookings, ...(response.data.member || [])];
+        }
+
+        console.log(`✅ Récupérés ${allBookings.length} réservations (${totalPages} pages)`);
+        dispatch(setAllBookings(allBookings))
     } catch (error) {
         dispatch(setError("Erreur lors de la récupération des réservations."))
         console.log(`Erreur fetchAllBookings : ${error}`)

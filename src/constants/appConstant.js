@@ -1,7 +1,9 @@
 import { FaCampground } from "react-icons/fa";
 import { IMAGE_URL } from "./apiConstant";
-import { MdOutlinePeople } from "react-icons/md";
+import { MdOutlineCalendarViewWeek, MdOutlinePeople } from "react-icons/md";
 import { TbReceiptEuro } from "react-icons/tb";
+import { Calendar } from "lucide-react";
+import { CiCalendar } from "react-icons/ci";
 // ====================
 // CLE DU LOCAL STORAGE
 // ====================
@@ -33,6 +35,7 @@ export const dataNavbar = [
 
 //Navigation principale 
 export const dataDashboard = [
+    { title: "Planning", path: "/admin/planning", icon: CiCalendar },
     { title: "Biens", path: "/admin/biens", icon: FaCampground },
     { title: "Facturation", path: "/admin/facture", icon: TbReceiptEuro },
     { title: "Propriétaires", path: "/admin/proprietaires", icon: MdOutlinePeople },
