@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import PageHeader from '../../../components/AdminDashboard/PageHeader';
 import { cn } from '../../../lib/utils'
 import { fetchAllFactures } from '../../../store/Facture/factureSlice';
+import { deleteBooking } from '../../../store/Booking/bookingSlice';
 import { API_ROOT } from '../../../constants/apiConstant';
 
 
@@ -13,6 +14,7 @@ export default function AdminFacture() {
 
   const [search, setSearch] = useState('');
   const [cancelledIds, setCancelledIds] = useState(new Set());
+  const [cancellingId, setCancellingId] = useState(null);
 
   useEffect(() => {
     dispatch(fetchAllFactures());
@@ -28,40 +30,56 @@ export default function AdminFacture() {
     });
   }, [search, factures]);
 
-  const handleCancel = async (id) => {
-    if (window.confirm("Êtes-vous sûr de vouloir annuler cette facture ? Un document d'annulation (Avoir) sera généré.")) {
-      try {
-        const token = localStorage.getItem('token');
+  const handleCancel = async (id, name) => {
+    if (!window.confirm("Êtes-vous sûr de vouloir annuler cette facture ? La réservation sera supprimée et un avoir sera généré.")) {
+      return;
+    }
 
-        // 1. Appel API vers la route Symfony que nous venons de créer
-        const response = await fetch(`${API_ROOT}/api/factures/${id}/cancel`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`
-          }
-        });
+    // Extraction du bookingId depuis le name : FACT-YYYYMMDD-{bookingId}-{uniqid}
+    const parts = name.split('-');
+    const bookingId = parts[2] ? parseInt(parts[2]) : null;
 
-        const data = await response.json();
+    if (!bookingId) {
+      alert("Impossible d'identifier la réservation liée à cette facture.");
+      return;
+    }
 
-        if (!response.ok) {
-          throw new Error(data.error || "Une erreur est survenue lors de l'annulation.");
-        }
+    setCancellingId(id);
 
-        // 2. Mise à jour visuelle instantanée pour griser la ligne
-        setCancelledIds(prev => new Set([...prev, id]));
+    try {
+      const token = localStorage.getItem('token');
 
-        // 3. Feedback utilisateur (tu peux remplacer ça par un Toast si tu as une librairie)
-        alert("Facture annulée avec succès. L'Avoir a été généré.");
+      // 1. Annulation de la facture côté Symfony (génère l'avoir + supprime les bookings)
+      const response = await fetch(`${API_ROOT}/api/factures/${id}/cancel`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+      });
 
-        // 4. Rafraîchissement du store Redux
-        // Cela va relancer l'appel API global et ramener la facture d'origine ET le nouvel AVOIR
-        dispatch(fetchAllFactures());
+      const data = await response.json();
 
-      } catch (error) {
-        console.error("Erreur d'annulation:", error);
-        alert(error.message);
+      if (!response.ok) {
+        throw new Error(data.error || "Une erreur est survenue lors de l'annulation.");
       }
+
+      // 2. Suppression du booking dans le store Redux
+      await dispatch(deleteBooking(bookingId)).unwrap();
+
+      // 3. Mise à jour visuelle
+      setCancelledIds(prev => new Set([...prev, id]));
+
+      // 4. Rafraîchissement de la liste des factures (ramène aussi le nouvel avoir)
+      dispatch(fetchAllFactures());
+
+      alert(`Facture annulée. Avoir généré : ${data.avoirName}`);
+
+    } catch (error) {
+      console.error("Erreur d'annulation :", error);
+      alert(error.message);
+    } finally {
+      setCancellingId(null);
     }
   };
 
@@ -101,14 +119,22 @@ export default function AdminFacture() {
               </thead>
               <tbody>
                 {filtered.map(inv => {
-                  const isCancelled = cancelledIds.has(inv.id);
+                  const isCancelled = cancelledIds.has(inv.id) || inv.name?.startsWith('AVOIR-');
+                  const isCancelling = cancellingId === inv.id;
 
                   return (
                     <tr key={inv.id} className={cn(
                       "border-b border-plum-100 hover:bg-plum-50/50 transition-colors",
                       isCancelled && "opacity-50 bg-gray-50 hover:bg-gray-50"
                     )}>
-                      <td className="px-4 py-3 font-mono text-xs text-plum-700">{inv.name}</td>
+                      <td className="px-4 py-3 font-mono text-xs text-plum-700">
+                        {inv.name}
+                        {inv.name?.startsWith('AVOIR-') && (
+                          <span className="ml-2 inline-block bg-red-100 text-red-600 text-[10px] font-semibold px-1.5 py-0.5 rounded">
+                            AVOIR
+                          </span>
+                        )}
+                      </td>
                       <td className="px-4 py-3 font-medium text-plum-900">{inv.client}</td>
                       <td className="px-4 py-3 text-plum-600">
                         {new Date(inv.createdAt).toLocaleDateString('fr-FR')}
@@ -130,14 +156,20 @@ export default function AdminFacture() {
                       <td className="px-4 py-3 text-center">
                         <div className="flex items-center justify-center gap-1">
                           {isCancelled ? (
-                            <span className="text-xs font-medium text-plum-500">Annulée</span>
+                            <span className="text-xs font-medium text-plum-400 italic">Annulée</span>
                           ) : (
                             <button
-                              onClick={() => handleCancel(inv.id)}
-                              className="px-3 py-1.5 rounded-lg text-plum-600 bg-plum-50 hover:bg-plum-100 hover:text-plum-700 transition-colors text-xs font-medium"
-                              title="Annuler la facture"
+                              onClick={() => handleCancel(inv.id, inv.name)}
+                              disabled={isCancelling}
+                              className={cn(
+                                "px-3 py-1.5 rounded-lg text-xs font-medium transition-colors",
+                                isCancelling
+                                  ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                                  : "text-plum-600 bg-plum-50 hover:bg-plum-100 hover:text-plum-700"
+                              )}
+                              title="Annuler la facture et supprimer la réservation"
                             >
-                              Annuler
+                              {isCancelling ? 'Annulation...' : 'Annuler'}
                             </button>
                           )}
                         </div>

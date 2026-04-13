@@ -18,6 +18,7 @@ import AdminFacture from '../screens/OnlineScreens/Admin/AdminFacture';
 import AdminBiens from '../screens/OnlineScreens/Admin/AdminBiens';
 import AdminProprio from '../screens/OnlineScreens/Admin/AdminProprio';
 import AdminPlanning from '../screens/OnlineScreens/Admin/AdminPlanning';
+import AdminRetributions from '../screens/OnlineScreens/Admin/AdminRetribution';
 
 const OnlineRouter = createBrowserRouter([
 
@@ -71,7 +72,7 @@ const OnlineRouter = createBrowserRouter([
                 children: [
                     {
                         path: "/dashboard",   
-                        element: <AdminDashboard/>,  
+                        element: <AdminRetributions/>,  
                     },
                     {
                         path: "/admin/planning",   
