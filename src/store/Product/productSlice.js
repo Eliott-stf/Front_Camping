@@ -49,12 +49,29 @@ export const { setLoading, setAvailableProducts, setAllProducts, setProductDetai
 export const fetchAllProducts = () => async (dispatch) => {
     try {
         dispatch(setLoading(true))
-        const response = await axios.get(`${API_URL}/products`);
-        const products = response.data.member;
-        dispatch(setAllProducts(products));
+
+        // Première requête pour obtenir le nombre total de produits
+        const firstResponse = await axios.get(`${API_URL}/products`, {
+            params: { page: 1 }
+        });
+
+        const totalItems = firstResponse.data.totalItems;
+        const itemsPerPage = firstResponse.data.member?.length || 30;
+        const totalPages = Math.ceil(totalItems / itemsPerPage);
+
+        let allProducts = firstResponse.data.member || [];
+
+        // Récupérer toutes les pages restantes
+        for (let page = 2; page <= totalPages; page++) {
+            const response = await axios.get(`${API_URL}/products`, {
+                params: { page }
+            });
+            allProducts = [...allProducts, ...(response.data.member || [])];
+        }
+
+        dispatch(setAllProducts(allProducts))
     } catch (error) {
-        console.log(`Erreur lors de la requête de tous les produits : ${error}`)
-        dispatch(setAllProducts([]));
+        console.log(`Erreur fetchAllProducts : ${error}`)
     } finally {
         dispatch(setLoading(false))
     }

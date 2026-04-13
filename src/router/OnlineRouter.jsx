@@ -17,8 +17,8 @@ import AdminBiensNew from '../screens/OnlineScreens/Admin/AdminBiensNew';
 import AdminReservation from '../screens/OnlineScreens/Admin/AdminReservation';
 import AdminReservationDetail from '../screens/OnlineScreens/Admin/AdminReservationDetail';
 import AdminFacture from '../screens/OnlineScreens/Admin/AdminFacture';
-import AdminFactureDetail from '../screens/OnlineScreens/Admin/AdminFactureDetail';
 import AdminBiens from '../screens/OnlineScreens/Admin/AdminBiens';
+import AdminProprio from '../screens/OnlineScreens/Admin/AdminProprio';
 
 const OnlineRouter = createBrowserRouter([
 
@@ -99,8 +99,8 @@ const OnlineRouter = createBrowserRouter([
                         element: <AdminFacture/>,  
                     },
                     {
-                        path: "/admin/facture/:id",   
-                        element: <AdminFactureDetail/>,  
+                        path: "/admin/proprietaires",   
+                        element: <AdminProprio/>,  
                     },
                 ]
             }

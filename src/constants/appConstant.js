@@ -94,3 +94,8 @@ export const TAX_RATES = {
         enfant: 1.00,
     },
 };
+
+// ============================
+// CONFIG DES CATEGORIES POUR ADMIN
+// ============================
+export const CATEGORIES = ['Tous', 'MH Locatif', 'MH Propriétaire', 'Caravane', 'Emplacement', 'Services'];
