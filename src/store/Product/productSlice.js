@@ -8,6 +8,7 @@ const productSlice = createSlice({
     initialState: {
         loading: false,
         availableProducts: [],
+        allProducts: [],
         productDetail: null,
         startDate: null,
         endDate: null,
@@ -21,6 +22,9 @@ const productSlice = createSlice({
         },
         setAvailableProducts: (state, action) => {
             state.availableProducts = action.payload
+        },
+        setAllProducts: (state, action) => {
+            state.allProducts = action.payload
         },
         setProductDetail: (state, action) => {
             state.productDetail = action.payload
@@ -39,7 +43,22 @@ const productSlice = createSlice({
     }
 })
 
-export const { setLoading, setAvailableProducts, setProductDetail, setDates, setGuests, setServices } = productSlice.actions
+export const { setLoading, setAvailableProducts, setAllProducts, setProductDetail, setDates, setGuests, setServices } = productSlice.actions
+
+// Méthode qui récupère TOUS les produits pour l'admin
+export const fetchAllProducts = () => async (dispatch) => {
+    try {
+        dispatch(setLoading(true))
+        const response = await axios.get(`${API_URL}/products`);
+        const products = response.data.member;
+        dispatch(setAllProducts(products));
+    } catch (error) {
+        console.log(`Erreur lors de la requête de tous les produits : ${error}`)
+        dispatch(setAllProducts([]));
+    } finally {
+        dispatch(setLoading(false))
+    }
+}
 
 // Méthode qui récupère les biens disponibles selon une période et filtre sur le type
 export const fetchAvailableProducts = (startDate, endDate, type = '', capacity = 1, adults = 1, children = 0) => async (dispatch) => {
