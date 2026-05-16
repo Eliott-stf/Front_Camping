@@ -8,8 +8,7 @@ export default function BienCard({ bien, onSelect }) {
   const firstMedia = bien.media?.[0];
   const imgSrc = getImageUrl(firstMedia?.path, 'https://images.unsplash.com/photo-1560518883-ce09059eeffa?q=80&w=200&h=200&auto=format&fit=crop');
 
-  const isProprietaire = bien.user?.some(u => u.isOwner === true);
-  const proprio = isProprietaire ? bien.user.find(u => u.isOwner === true) : null;
+  const proprio = bien.user;
 
   const handleDelete = (e) => {
     e.stopPropagation();

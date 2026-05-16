@@ -11,7 +11,8 @@ import { CATEGORIES } from '../../../constants/appConstant';
 
 const getCategory = (bien) => {
     const title = bien.title?.toLowerCase() ?? '';
-    const hasOwner = bien.user?.some(u => u.isOwner === true);
+    const hasOwner = !!bien.user; 
+    
     if (title.includes('m-h') && hasOwner) return 'MH Propriétaire';
     if (title.includes('m-h'))             return 'MH Locatif';
     if (title.includes('caravane'))        return 'Caravane';
