@@ -3,6 +3,7 @@ import productReducer from "./Product/productSlice"
 import bookingReducer from "./Booking/bookingSlice"
 import userReducer from "./User/userSlice"
 import factureReducer from "./Facture/factureSlice"
+import alertReducer from "./Alert/alertSlice";
 
 const store = configureStore({
     reducer:{
@@ -10,7 +11,8 @@ const store = configureStore({
         products: productReducer,
         bookings: bookingReducer,
         users: userReducer,
-        factures: factureReducer
+        factures: factureReducer,
+        alerts: alertReducer,
     }
 })
 

@@ -19,6 +19,7 @@ import AdminBiens from '../screens/OnlineScreens/Admin/AdminBiens';
 import AdminProprio from '../screens/OnlineScreens/Admin/AdminProprio';
 import AdminPlanning from '../screens/OnlineScreens/Admin/AdminPlanning';
 import AdminRetributions from '../screens/OnlineScreens/Admin/AdminRetribution';
+import AdminAlerts from '../screens/OnlineScreens/Admin/AdminAlerts';
 
 const OnlineRouter = createBrowserRouter([
 
@@ -97,6 +98,10 @@ const OnlineRouter = createBrowserRouter([
                     {
                         path: "/admin/proprietaires",   
                         element: <AdminProprio/>,  
+                    },
+                    {
+                        path: "/admin/alertes",   
+                        element: <AdminAlerts/>,  
                     },
                 ]
             }
