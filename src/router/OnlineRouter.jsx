@@ -8,7 +8,7 @@ import BienListe from '../screens/OfflineScreens/BienListe';
 import BienDetail from '../screens/OfflineScreens/BienDetail';
 import Compte from '../screens/OnlineScreens/Compte';
 import OwnerRoute from '../components/Guards/OwnerRoute';
-import { OwnerPlanning } from '../screens/OnlineScreens/Owner/OwnerPlanning';
+import OwnerPlanning from '../screens/OnlineScreens/Owner/OwnerPlanning';
 import OwnerRetribution from '../screens/OnlineScreens/Owner/OwnerRetribution';
 import AdminRoute from '../components/Guards/AdminRoute';
 import AdminDashboard from '../screens/OnlineScreens/Admin/AdminDashboard';

@@ -2,19 +2,17 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Timeline from "react-calendar-timeline";
 import moment from "moment";
-import { ChevronLeft, ChevronRight, Filter, Loader2 } from "lucide-react";
+import { ChevronLeft, ChevronRight, Loader2 } from "lucide-react";
 import PageHeader from "./PageHeader";
-import { cn } from "../../lib/utils";
 import "./TimelineBase.css";
-import { fetchAllBookings } from "../../store/Booking/bookingSlice";
-import { fetchAllProducts } from "../../store/Product/productSlice";
+import { fetchBookingsByOwner } from "../../store/Booking/bookingSlice";
+import { fetchProductsByOwner } from "../../store/Product/productSlice";
+import { useAuthContext } from "../../contexts/AuthContext";
 import { TIMELINE_CSS, TYPE_CONFIG, ALL_TYPES } from "../../constants/appConstant"
 
-// ─── SAISON STATIQUE ──────────────────────────────────────────────────────────
 const SEASON_START = moment("2026-04-01");
-const SEASON_END = moment("2026-11-30");
+const SEASON_END   = moment("2026-11-30");
 
-// ─── HELPERS ──────────────────────────────────────────────────────────────────
 const getProductId = (product) => {
   if (!product) return null;
   if (typeof product === "object") {
@@ -40,30 +38,26 @@ const getCategory = (product) => {
 
 const getGuestLabel = (booking) => booking.user?.name ?? `#${booking.id}`;
 
-// ─── COMPOSANT PRINCIPAL ──────────────────────────────────────────────────────
-export default function BookingPlanner() {
+export default function BookingPlannerOwner() {
   const dispatch = useDispatch();
+  const { userId } = useAuthContext();
 
   const allBookings = useSelector((state) => state.bookings?.allBookings ?? []);
   const allProducts = useSelector((state) => state.products?.allProducts ?? []);
-  const loading = useSelector((state) => state.bookings?.loading || state.products?.loading);
-  const error = useSelector((state) => state.bookings?.error ?? null);
+  const loading     = useSelector((state) => state.bookings?.loading || state.products?.loading);
+  const error       = useSelector((state) => state.bookings?.error ?? null);
 
-  const [activeFilters, setActiveFilters] = useState([...ALL_TYPES]);
   const [currentMonth, setCurrentMonth] = useState(SEASON_START.clone().startOf("month"));
 
   useEffect(() => {
-    dispatch(fetchAllBookings());
-    dispatch(fetchAllProducts());
-  }, [dispatch]);
+    if (userId) {
+      dispatch(fetchBookingsByOwner(userId));
+      dispatch(fetchProductsByOwner(userId));
+    }
+  }, [dispatch, userId]);
 
   const visibleStart = currentMonth.clone().startOf("month").valueOf();
-  const visibleEnd = currentMonth.clone().endOf("month").valueOf();
-
-  const toggleFilter = (type) =>
-    setActiveFilters((prev) =>
-      prev.includes(type) ? prev.filter((t) => t !== type) : [...prev, type]
-    );
+  const visibleEnd   = currentMonth.clone().endOf("month").valueOf();
 
   const goMonth = (dir) => {
     const next = currentMonth.clone().add(dir, "month");
@@ -86,7 +80,6 @@ export default function BookingPlanner() {
   const groups = React.useMemo(() => {
     const result = [];
     ALL_TYPES.forEach((category) => {
-      if (!activeFilters.includes(category)) return;
       const productsOfCategory = allProducts.filter((p) => getCategory(p) === category);
       if (productsOfCategory.length === 0) return;
       result.push({ id: `header-${category}`, title: TYPE_CONFIG[category].label, isHeader: true, category });
@@ -95,7 +88,7 @@ export default function BookingPlanner() {
       );
     });
     return result;
-  }, [allProducts, activeFilters]);
+  }, [allProducts]);
 
   const items = React.useMemo(() => {
     return allBookings
@@ -113,24 +106,22 @@ export default function BookingPlanner() {
         if (!product) return null;
 
         const { category } = product;
-        if (!activeFilters.includes(category)) return null;
-
         const cfg = TYPE_CONFIG[category];
         if (!cfg || !b.startAt || !b.endAt) return null;
 
         return {
-          id: b.id,
-          group: productId,
-          title: getGuestLabel(b),
+          id:         b.id,
+          group:      productId,
+          title:      getGuestLabel(b),
           start_time: moment(b.startAt),
-          end_time: moment(b.endAt),
+          end_time:   moment(b.endAt),
           itemProps: {
             style: { background: cfg.color, border: "none", borderRadius: "4px", color: "#fff" },
           },
         };
       })
       .filter(Boolean);
-  }, [allBookings, productsMap, activeFilters]);
+  }, [allBookings, productsMap]);
 
   const groupRenderer = ({ group }) => {
     if (group.isHeader) {
@@ -152,7 +143,7 @@ export default function BookingPlanner() {
   if (loading && allBookings.length === 0 && allProducts.length === 0) {
     return (
       <div className="animate-slideup2 min-h-screen">
-        <PageHeader title="Planning des réservations" subtitle="Vue globale par mois" />
+        <PageHeader title="Planning de mes hébergements" subtitle="Vue globale par mois" />
         <div className="flex items-center justify-center h-64 text-plum-600 gap-3">
           <Loader2 className="w-5 h-5 animate-spin" />
           <span className="text-sm font-medium">Chargement du planning…</span>
@@ -163,9 +154,9 @@ export default function BookingPlanner() {
 
   if (error) {
     return (
-      <div className="flex items-center justify-center h-64 text-red-500 gap-2">
-        <span className="text-sm font-medium">Erreur : {error}</span>
-      </div>
+        <div className="flex items-center justify-center h-64 text-red-500 gap-2">
+          <span className="text-sm font-medium">Erreur : {error}</span>
+        </div>
     );
   }
 
@@ -173,9 +164,7 @@ export default function BookingPlanner() {
     <div className="animate-slideup2 min-h-screen">
       <style>{TIMELINE_CSS}</style>
 
-      {/* ── NAVIGATION ET FILTRES ── */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-4">
-
         <div className="flex items-center gap-2">
           <button
             onClick={() => goMonth(-1)}
@@ -197,30 +186,8 @@ export default function BookingPlanner() {
             <ChevronRight className="w-5 h-5" />
           </button>
         </div>
-
-        <div className="flex items-center gap-1 bg-white rounded-lg border border-plum-200 p-1">
-          <Filter className="w-4 h-4 text-plum-400 ml-2" />
-          {ALL_TYPES.map((category) => {
-            const cfg = TYPE_CONFIG[category];
-            const active = activeFilters.includes(category);
-            return (
-              <button
-                key={category}
-                onClick={() => toggleFilter(category)}
-                className={cn(
-                  "px-3 py-1.5 text-xs font-medium rounded-md transition-all flex items-center gap-1.5",
-                  active ? "bg-plum-700 text-white shadow-sm" : "text-plum-600 hover:bg-plum-50"
-                )}
-              >
-                {active && <span className="w-1.5 h-1.5 rounded-full bg-white" />}
-                {cfg.label}
-              </button>
-            );
-          })}
-        </div>
       </div>
 
-      {/* ── TIMELINE ── */}
       <div className="carte p-0 overflow-hidden">
         {groups.length > 0 ? (
           <Timeline
@@ -228,7 +195,7 @@ export default function BookingPlanner() {
             items={items}
             visibleTimeStart={visibleStart}
             visibleTimeEnd={visibleEnd}
-            onTimeChange={() => { }}
+            onTimeChange={() => {}}
             lineHeight={40}
             itemHeightRatio={0.7}
             sidebarWidth={160}
@@ -240,12 +207,11 @@ export default function BookingPlanner() {
           />
         ) : (
           <div className="flex items-center justify-center h-40 text-plum-400 text-sm">
-            Aucun produit à afficher pour les filtres sélectionnés.
+            Aucun produit à afficher.
           </div>
         )}
       </div>
 
-      {/* ── LÉGENDE ── */}
       <div className="flex items-center gap-4 mt-4 text-xs text-plum-600">
         {ALL_TYPES.map((type) => {
           const cfg = TYPE_CONFIG[type];

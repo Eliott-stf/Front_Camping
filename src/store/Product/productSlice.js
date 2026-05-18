@@ -130,6 +130,25 @@ export const fetchServices = () => async (dispatch) => {
     }
 }
 
+// Mes product en tant qu'Owner 
+export const fetchProductsByOwner = (userId) => async (dispatch) => {
+    try {
+        dispatch(setLoading(true));
+
+        const response = await axios.get(`${API_URL}/products`, {
+            params: { user: userId }
+        });
+
+        const ownerProducts = response.data.member || response.data['hydra:member'] || [];
+
+        dispatch(setAllProducts(ownerProducts));
+    } catch (error) {
+        console.log(`Erreur fetchProductsByOwner : ${error}`);
+    } finally {
+        dispatch(setLoading(false));
+    }
+};
+
 /**
  * Méthode d'ajout, d'edit et suppression d'un prodcut 
  */

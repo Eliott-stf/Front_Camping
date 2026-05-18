@@ -86,32 +86,21 @@ export const fetchBookingsByUser = (userId) => async (dispatch) => {
 };
 
 // Réservations associées aux hébergements du propriétaire connecté
-export const fetchBookingsByOwner = () => async (dispatch) => {
+export const fetchBookingsByOwner = (userId) => async (dispatch) => {
     try {
         dispatch(setLoading(true));
-        dispatch(setError(null));
 
-        const token = localStorage.getItem('token');
-
-        // L'API filtre les réservations dont les produits appartiennent à l'utilisateur connecté
         const response = await axios.get(`${API_URL}/bookings`, {
             params: {
-                'products.type': 'hebergement',
-                // API Platform 
-                'products.user': 'me'
-            },
-            headers: {
-                Authorization: `Bearer ${token}`
+                'products.user': userId
             }
         });
 
-        const bookings = response.data.member || response.data['hydra:member'] || response.data;
+        const bookings = response.data.member || response.data['hydra:member'] || [];
 
-        // Réutilisation de l'état allBookings ou filtrage dédié selon l'architecture de vos composants
         dispatch(setAllBookings(bookings));
     } catch (error) {
-        dispatch(setError("Erreur lors de la récupération des réservations de vos biens."));
-        console.error(`Erreur fetchBookingsByOwner :`, error);
+        console.error(`Erreur fetchBookingsByOwner : ${error}`);
     } finally {
         dispatch(setLoading(false));
     }

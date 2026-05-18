@@ -35,8 +35,6 @@ const retributionSlice = createSlice({
 
 export const { setLoading, setRetributionData, setLocked, setError, clearRetribution } = retributionSlice.actions;
 
-// DANS store/Retribution/retributionSlice.js
-
 export const fetchOwnerRetribution = (year) => async (dispatch) => {
     try {
         dispatch(setLoading(true));
