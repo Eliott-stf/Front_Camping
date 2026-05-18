@@ -1,122 +1,167 @@
 import { useState, useEffect } from 'react';
-import { Download, FileText } from 'lucide-react';
-import { useSelector } from 'react-redux';
-import { cn } from '../../../lib/utils';
-import { API_ROOT } from '../../../constants/apiConstant';
+import { useDispatch, useSelector } from 'react-redux';
+import { Lock, Download, Calendar, Euro, FileText, AlertCircle } from 'lucide-react';
+import PageHeader from '../../../components/AdminDashboard/PageHeader';
+import { fetchOwnerRetribution, clearRetribution } from '../../../store/Retribution/retributionSlice';
 
 export default function OwnerRetributions() {
-  const { user } = useSelector(state => state.auth); // adapter selon ton slice auth
-  const [factures, setFactures] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [saison] = useState(new Date().getFullYear());
+  const dispatch = useDispatch();
 
+  const retributionState = useSelector((state) => state.retribution);
+  const { data = null, loading = false, isLocked = false, error = null } = retributionState || {};
+
+  // DEBUG: Log pour vérifier ce que le composant reçoit
   useEffect(() => {
-    if (!user?.id) return;
-    const token = localStorage.getItem('token');
+    console.log("OwnerRetribution - retributionState reçu :", retributionState);
+    console.log("OwnerRetribution - data :", data);
+    console.log("OwnerRetribution - loading :", loading);
+  }, [retributionState, data, loading]);
 
-    fetch(`${API_ROOT}/api/retributions?owner=${user.id}`, {
-      headers: { Authorization: `Bearer ${token}` },
-    })
-      .then(r => r.json())
-      .then(data => {
-        setFactures(data);
-        setLoading(false);
-      })
-      .catch(() => setLoading(false));
-  }, [user]);
+  // Initialisation par défaut sur 2024 pour correspondre aux fixtures disponibles
+  const [saison, setSaison] = useState(2024);
 
-  const totalSaison = factures
-    .filter(f => f.saison == saison)
-    .reduce((sum, f) => {
-      const lastLine = f.lignes?.[f.lignes.length - 1] ?? '';
-      const match    = lastLine.match(/= ([\d.]+)€/);
-      return sum + (match ? parseFloat(match[1]) : 0);
-    }, 0);
+  // Déclenche la récupération des données lorsque la saison change
+  useEffect(() => {
+    dispatch(fetchOwnerRetribution(saison));
+  }, [dispatch, saison]);
+
+  // Nettoyage unique de l'état Redux UNIQUEMENT quand l'utilisateur quitte la page
+  useEffect(() => {
+    return () => {
+      dispatch(clearRetribution());
+    };
+  }, [dispatch]);
+
+  const handleSaisonChange = (e) => {
+    setSaison(Number(e.target.value));
+  };
+
+  const formatCurrency = (val) => new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR' }).format(val);
+  const formatDate = (dateStr) => new Date(dateStr).toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric' });
 
   return (
     <div className="animate-slideup2">
-      <div className="mb-6">
-        <h1 className="text-2xl font-bold text-plum-900">Mes rétributions</h1>
-        <p className="text-sm text-plum-500 mt-1">Saison {saison}</p>
+      <div className="flex items-center justify-between mb-6">
+        <PageHeader
+          title="Mes Rétributions"
+          subtitle="Suivi de vos revenus locatifs"
+        />
+
+        {/* Sélecteur d'année */}
+        <div className="flex items-center gap-3">
+          <label className="text-sm font-medium text-plum-700 flex items-center gap-2">
+            <Calendar className="w-4 h-4" /> Saison :
+          </label>
+          <select
+            value={saison}
+            onChange={handleSaisonChange}
+            className="border-plum-200 bg-white text-plum-900 text-sm rounded-lg focus:ring-plum-500 focus:border-plum-500 block p-2 px-3 shadow-sm"
+          >
+            <option value={2026}>2026</option>
+            <option value={2025}>2025</option>
+            <option value={2024}>2024</option>
+            <option value={2023}>2023</option>
+          </select>
+        </div>
       </div>
 
-      {/* Récap saison */}
-      {!loading && factures.length > 0 && (
-        <div className="carte mb-6 p-4 flex items-center justify-between">
-          <div>
-            <div className="text-xs text-plum-500 uppercase tracking-wide mb-1">Total saison {saison}</div>
-            <div className="text-2xl font-bold text-plum-900">{totalSaison.toFixed(2)} €</div>
-            <div className="text-xs text-plum-400 mt-1">
-              {factures.filter(f => f.saison == saison).length} facture(s) de rétribution
-            </div>
-          </div>
-          <div className="text-plum-200">
-            <FileText className="w-12 h-12" />
-          </div>
+      {error && !isLocked && (
+        <div className="bg-red-50 border-l-4 border-red-500 p-4 rounded-lg flex items-start gap-3 mb-6">
+          <AlertCircle className="w-5 h-5 text-red-500 mt-0.5" />
+          <p className="text-sm text-red-700">{error}</p>
         </div>
       )}
 
-      {/* Liste des factures */}
-      <div className="space-y-4">
-        {loading ? (
-          <div className="p-8 text-center text-plum-500">Chargement...</div>
-        ) : factures.length === 0 ? (
-          <div className="carte p-8 text-center text-plum-400 italic">
-            Aucune rétribution disponible pour cette saison.
-            {new Date() < new Date(`${saison}-10-10`) && (
-              <p className="mt-2 text-xs">
-                Les rétributions seront générées en fin de saison (après le 10 octobre {saison}).
-              </p>
-            )}
-          </div>
-        ) : (
-          factures.map(facture => (
-            <div key={facture.id} className="carte p-0 overflow-hidden">
-              {/* En-tête facture */}
-              <div className="flex items-center justify-between px-5 py-4 bg-plum-50 border-b border-plum-100">
-                <div>
-                  <span className="font-mono text-xs text-plum-700">{facture.name}</span>
-                  <span className="ml-3 text-xs text-plum-400">Émise le {facture.createdAt}</span>
-                </div>
-                {facture.pdfDisponible ? (
-                  <a
-                    href={`${API_ROOT}${facture.path}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-plum-600 text-white text-xs font-medium hover:bg-plum-700 transition-colors"
-                  >
-                    <Download className="w-3 h-3" /> Télécharger PDF
-                  </a>
-                ) : (
-                  <span className="text-xs text-gray-400 italic px-3 py-1.5">
-                    Disponible après le 10/10/{facture.saison}
-                  </span>
-                )}
-              </div>
-
-              {/* Lignes de détail (une par booking) */}
-              <div className="divide-y divide-plum-50">
-                {facture.lignes?.map((ligne, i) => {
-                  // Extraction du montant de rétribution depuis le label
-                  const match = ligne.match(/= ([\d.]+)€$/);
-                  const montant = match ? parseFloat(match[1]) : null;
-
-                  return (
-                    <div key={i} className="px-5 py-3 flex items-center justify-between">
-                      <span className="text-xs text-plum-700 flex-1 pr-4">{ligne}</span>
-                      {montant !== null && (
-                        <span className="text-xs font-semibold text-plum-900 whitespace-nowrap">
-                          {montant.toFixed(2)} €
-                        </span>
-                      )}
-                    </div>
-                  );
-                })}
-              </div>
+      {loading ? (
+        <div className="carte p-12 flex flex-col items-center justify-center space-y-3">
+          <div className="w-8 h-8 border-4 border-plum-200 border-t-plum-600 rounded-full animate-spin"></div>
+          <p className="text-plum-500 text-sm animate-pulse">Récupération de vos données...</p>
+        </div>
+      ) : isLocked ? (
+        <div className="carte overflow-hidden relative">
+          <div className="absolute top-0 left-0 w-full h-1 bg-amber-400"></div>
+          <div className="p-8 sm:p-12 text-center flex flex-col items-center justify-center">
+            <div className="w-16 h-16 bg-amber-50 text-amber-500 rounded-full flex items-center justify-center mb-4">
+              <Lock className="w-8 h-8" />
             </div>
-          ))
-        )}
-      </div>
+            <h3 className="text-lg font-bold text-plum-900 mb-2">Bilan en cours de constitution</h3>
+            <p className="text-plum-600 max-w-md text-sm leading-relaxed">
+              Pour des raisons comptables, les montants des rétributions pour la saison <strong>{saison}</strong> seront calculés et dévoilés à la clôture officielle du camping, le <strong>10 octobre {saison}</strong>.
+            </p>
+          </div>
+        </div>
+      ) : data ? (
+        <div className="space-y-6">
+          {/* En-tête des gains */}
+          <div className="carte bg-gradient-to-br from-plum-600 to-plum-800 text-white p-6 sm:p-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
+            <div>
+              <p className="text-plum-100 font-medium text-sm mb-1 uppercase tracking-wider">Total de vos gains (saison {saison})</p>
+              <h2 className="text-4xl font-black tracking-tight">{formatCurrency(data.total_retribution)}</h2>
+              <p className="text-plum-200 text-xs mt-2 flex items-center gap-1.5">
+                <Euro className="w-3.5 h-3.5" />
+                Base de calcul : 35% du tarif hébergement (hors taxes/options)
+              </p>
+            </div>
+            <button className="bg-white text-plum-700 hover:bg-plum-50 px-5 py-2.5 rounded-lg text-sm font-bold shadow-lg transition-colors flex items-center gap-2 w-full sm:w-auto justify-center">
+              <Download className="w-4 h-4" />
+              Télécharger le PDF
+            </button>
+          </div>
+
+          {/* Liste des réservations */}
+          <div className="carte overflow-hidden">
+            <div className="px-6 py-4 border-b border-plum-100 bg-plum-50/50 flex items-center justify-between">
+              <h3 className="font-semibold text-plum-900 flex items-center gap-2">
+                <FileText className="w-4 h-4 text-plum-500" />
+                Détail des locations facturées
+              </h3>
+              <span className="text-xs font-medium bg-white px-2.5 py-1 rounded-full text-plum-600 border border-plum-200 shadow-sm">
+                {data.lines?.length || 0} séjour(s)
+              </span>
+            </div>
+
+            <div className="divide-y divide-plum-50">
+              {data.lines && data.lines.length > 0 ? (
+                data.lines.map((line, index) => (
+                  <div key={index} className="p-6 hover:bg-plum-50/50 transition-colors flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div className="flex-1">
+                      <div className="flex items-center gap-3 mb-1.5">
+                        <span className="font-mono text-xs font-bold text-plum-500 bg-plum-100 px-2 py-0.5 rounded">
+                          #{line.booking_id}
+                        </span>
+                        <span className="font-medium text-plum-900">
+                          {line.product_title}
+                        </span>
+                      </div>
+                      <p className="text-sm text-plum-500 flex items-center gap-1.5">
+                        <Calendar className="w-3.5 h-3.5" />
+                        Du {formatDate(line.start_at)} au {formatDate(line.end_at)}
+                      </p>
+                    </div>
+
+                    <div className="flex flex-row sm:flex-col justify-between sm:justify-end items-center sm:items-end gap-1 sm:text-right bg-white sm:bg-transparent p-3 sm:p-0 rounded-lg border sm:border-none border-plum-100 shadow-sm sm:shadow-none">
+                      <div className="text-xs text-plum-400">
+                        Base HT : {formatCurrency(line.net_accommodation)}
+                      </div>
+                      <div className="text-sm font-bold text-emerald-600 bg-emerald-50 sm:bg-transparent px-2 py-1 sm:p-0 rounded">
+                        +{formatCurrency(line.owner_share)}
+                      </div>
+                    </div>
+                  </div>
+                ))
+              ) : (
+                <div className="p-12 text-center text-plum-400 italic">
+                  Aucune location comptabilisée pour vos biens sur la saison {saison}.
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      ) : (
+        <div className="p-12 text-center text-plum-400 italic">
+          Aucune donnée disponible pour cette saison.
+        </div>
+      )}
     </div>
   );
 }

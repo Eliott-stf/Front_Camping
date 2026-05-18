@@ -43,22 +43,28 @@ const OnlineRouter = createBrowserRouter([
                 path: "/compte",   //Chemin de la vue 
                 element: <Compte />,  //Element retourné
             },
-            // ===========================
-            // ROUTES ROLE_OWNER
-            // ===========================
+        ]
+    },
+    // ===========================
+    // ROUTES ROLE_OWNER 
+    // ===========================
+    {
+        element: <OwnerRoute />,
+        errorElement: <ErrorPage />,
+        children: [
             {
-                element: <OwnerRoute />,   // Guard vérifie ROLE_OWNER 
+                element: <AdminLayout />,
                 children: [
                     {
-                        path: "/owner/planning",   
-                        element: <OwnerPlanning />,  
+                        path: "/owner/planning",
+                        element: <OwnerPlanning />,
                     },
                     {
-                        path: "/owner/retribution",   
-                        element: <OwnerRetribution />,  
+                        path: "/owner/retribution",
+                        element: <OwnerRetribution />,
                     },
                 ]
-            },
+            }
         ]
     },
     // ===========================
@@ -72,36 +78,40 @@ const OnlineRouter = createBrowserRouter([
                 element: <AdminLayout />,
                 children: [
                     {
-                        path: "/dashboard",   
-                        element: <AdminRetributions/>,  
+                        path: "/dashboard",
+                        element: <AdminRetributions />,
                     },
                     {
-                        path: "/admin/planning",   
-                        element: <AdminPlanning/>,  
+                        path: "/admin/planning",
+                        element: <AdminPlanning />,
                     },
                     {
-                        path: "/admin/biens",   
-                        element: <AdminBiens/>,  
+                        path: "/admin/biens",
+                        element: <AdminBiens />,
                     },
                     {
-                        path: "/admin/reservations",   
-                        element: <AdminReservation/>,  
+                        path: "/admin/reservations",
+                        element: <AdminReservation />,
                     },
                     {
-                        path: "/admin/reservations/:id",   
-                        element: <AdminReservationDetail/>,  
+                        path: "/admin/reservations/:id",
+                        element: <AdminReservationDetail />,
                     },
                     {
-                        path: "/admin/facture",   
-                        element: <AdminFacture/>,  
+                        path: "/admin/facture",
+                        element: <AdminFacture />,
                     },
                     {
-                        path: "/admin/proprietaires",   
-                        element: <AdminProprio/>,  
+                        path: "/admin/proprietaires",
+                        element: <AdminProprio />,
                     },
                     {
-                        path: "/admin/alertes",   
-                        element: <AdminAlerts/>,  
+                        path: "/admin/alertes",
+                        element: <AdminAlerts />,
+                    },
+                    {
+                        path: "/admin/retribution",
+                        element: <AdminRetributions />,
                     },
                 ]
             }

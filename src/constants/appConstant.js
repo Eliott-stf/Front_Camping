@@ -1,6 +1,6 @@
 import { FaCampground } from "react-icons/fa";
 import { IMAGE_URL } from "./apiConstant";
-import { MdOutlineCalendarViewWeek, MdOutlinePeople, MdOutlineSimCardAlert } from "react-icons/md";
+import { MdOutlineAttachMoney, MdOutlineCalendarViewWeek, MdOutlinePeople, MdOutlineSimCardAlert } from "react-icons/md";
 import { TbReceiptEuro } from "react-icons/tb";
 import { Calendar, ShieldAlert } from "lucide-react";
 import { CiCalendar } from "react-icons/ci";
@@ -40,6 +40,13 @@ export const dataDashboard = [
     { title: "Facturation", path: "/admin/facture", icon: TbReceiptEuro },
     { title: "Propriétaires", path: "/admin/proprietaires", icon: MdOutlinePeople },
     { title: "Alertes", path: "/admin/alertes", icon: MdOutlineSimCardAlert },
+    { title: "Retributions", path: "/admin/retribution", icon: MdOutlineAttachMoney },
+]
+
+//Navigation principale 
+export const dataDashboardOwner = [
+    { title: "Planning", path: "/owner/planning", icon: CiCalendar },
+    { title: "Retributions", path: "/owner/retribution", icon: MdOutlineAttachMoney },
 ]
 
 // ============================

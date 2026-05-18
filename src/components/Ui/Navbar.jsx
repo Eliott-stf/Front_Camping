@@ -43,9 +43,9 @@ export default function Navbar() {
                 <div className="hidden md:flex items-center gap-2">
                     {userId ? (
                         <>
-                            {role?.includes("ROLE_ADMIN") && (
+                            {(role?.includes("ROLE_ADMIN") || role?.includes("ROLE_OWNER")) && (
                                 <Link
-                                    to="/admin/biens"
+                                    to={role?.includes("ROLE_ADMIN") ? "/admin/biens" : "/owner/retribution"}
                                     className="flex items-center gap-2 bg-slate-800 text-white px-4 py-2 rounded-md shadow-sm hover:bg-slate-900 focus:ring-2 focus:ring-slate-500 focus:outline-none transition-all no-underline text-sm font-medium"
                                 >
                                     <MdOutlineSpaceDashboard className="w-4 h-4" />
@@ -100,9 +100,9 @@ export default function Navbar() {
                     <div className="space-y-2 mt-4">
                         {userId ? (
                             <>
-                                  {role?.includes("ROLE_ADMIN") && (
+                                {(role?.includes("ROLE_ADMIN") || role?.includes("ROLE_OWNER")) && (
                                     <Link
-                                        to="/admin/biens"
+                                        to={role?.includes("ROLE_ADMIN") ? "/admin/biens" : "/owner/retribution"}
                                         onClick={() => setMobileOpen(false)}
                                         className="flex items-center justify-center gap-2 bg-slate-800 text-white px-4 py-3 rounded-md shadow-sm hover:bg-slate-900 focus:ring-2 focus:ring-slate-500 focus:outline-none transition-all text-center no-underline text-sm font-medium"
                                     >

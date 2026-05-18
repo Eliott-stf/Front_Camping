@@ -1,13 +1,19 @@
 import { FaChevronLeft, FaChevronRight } from 'react-icons/fa6';
 import { IMAGE_URL } from '../../constants/apiConstant';
-import { dataDashboard } from '../../constants/appConstant';
+import { dataDashboard, dataDashboardOwner } from '../../constants/appConstant';
 import Navlinks from './Navlinks';
 import { IoMdClose } from 'react-icons/io';
+import { useAuthContext } from '../../contexts/AuthContext';
 
 const ImgSrc = `${IMAGE_URL}/logo.png`;
 
 export default function Sidebar({ collapsed, onToggle, mobileOpen, onMobileClose }) {
-  const sidebarData = dataDashboard.map((item) => ({
+  const { role } = useAuthContext();
+
+  // Déterminer les données en fonction du rôle
+  const navigationData = role?.includes("ROLE_OWNER") ? dataDashboardOwner : dataDashboard;
+
+  const sidebarData = navigationData.map((item) => ({
     ...item,
     title: collapsed ? item.title.substring(0, 2).toUpperCase() : item.title,
   }));
@@ -16,14 +22,14 @@ export default function Sidebar({ collapsed, onToggle, mobileOpen, onMobileClose
     <>
       {/* Mobile overlay */}
       {mobileOpen && (
-        <div 
+        <div
           className="fixed inset-0 bg-black/50 z-40 lg:hidden"
           onClick={onMobileClose}
         />
       )}
 
       <aside className={`fixed top-0 left-0 h-full z-50 flex flex-col transition-all duration-300 ease-in-out bg-plum-950 text-plum-100 ${collapsed ? "w-[72px]" : "w-64"} ${mobileOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"}`}>
-        
+
         {/* Header */}
         <div className="flex items-center gap-3 px-4 h-16 border-b border-plum-800 shrink-0">
           <div className="w-9 h-9 shrink-0 flex items-center justify-center">
@@ -32,10 +38,10 @@ export default function Sidebar({ collapsed, onToggle, mobileOpen, onMobileClose
           {!collapsed && (
             <div className="overflow-hidden">
               <p className="text-sm font-semibold text-white truncate">Les Lilas</p>
-              <p className="text-xs text-plum-400 truncate">Administration</p>
+              <p className="text-xs text-plum-400 truncate">{role?.includes("ROLE_OWNER") ? "Propriétaire" : "Administration"}</p>
             </div>
           )}
-          <button 
+          <button
             onClick={onMobileClose}
             className="ml-auto lg:hidden text-plum-400 hover:text-white"
           >
