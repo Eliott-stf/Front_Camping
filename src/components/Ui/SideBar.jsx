@@ -4,6 +4,8 @@ import { dataDashboard, dataDashboardOwner } from '../../constants/appConstant';
 import Navlinks from './Navlinks';
 import { IoMdClose } from 'react-icons/io';
 import { useAuthContext } from '../../contexts/AuthContext';
+import { Link } from 'react-router-dom';
+import { FaHome } from 'react-icons/fa';
 
 const ImgSrc = `${IMAGE_URL}/logo.png`;
 
@@ -58,6 +60,19 @@ export default function Sidebar({ collapsed, onToggle, mobileOpen, onMobileClose
             className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 no-underline text-plum-300 hover:bg-plum-800 hover:text-white [&.active]:bg-plum-700 [&.active]:text-white [&.active]:shadow-md ${collapsed ? "justify-center" : ""}`}
           />
         </nav>
+
+        {/* Retour à l'accueil */}
+        <div className="px-3 py-2 border-t border-plum-800">
+          <Link
+            to="/"
+            onClick={onMobileClose}
+            className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 no-underline text-plum-300 hover:bg-plum-800 hover:text-white ${collapsed ? "justify-center" : ""}`}
+            title="Retour à l'accueil"
+          >
+            <FaHome className="w-4 h-4 shrink-0" />
+            {!collapsed && <span>Accueil</span>}
+          </Link>
+        </div>
 
         {/* Collapse toggle */}
         <div className="hidden lg:flex items-center justify-center py-3 border-t border-plum-800">
